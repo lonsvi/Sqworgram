@@ -1,0 +1,38 @@
+﻿<Window x:Class="_1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sqworogram"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Normal"
+        Width="1000" Height="600"
+        MaxWidth="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Width}"
+        MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
+        WindowStyle="None"
+        AllowsTransparency="True" Icon="/image (2).jpg">
+
+    <!-- Градиентный фон окна -->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FF1B1B1B" Offset="0.0"/>
+            <GradientStop Color="#FF2B2B2B" Offset="1.0"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <!-- Панель управления окном -->
+        <Border Background="Transparent" Height="30" VerticalAlignment="Top" MouseDown="Border_MouseDown" Grid.RowSpan="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="_" Width="30" Height="30" Background="Transparent" Foreground="White" BorderThickness="0" Click="MinimizeButton_Click"/>
+                <Button Content="🗖" Width="30" Height="30" Background="Transparent" Foreground="White" BorderThickness="0" Click="MaximizeRestoreButton_Click"/>
+                <Button Content="✖" Width="30" Height="30" Background="Transparent" Foreground="White" BorderThickness="0" Click="CloseButton_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Frame для навигации -->
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Margin="0,30,0,0" Grid.RowSpan="2"/>
+    </Grid>
+</Window>

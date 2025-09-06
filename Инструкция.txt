@@ -1,0 +1,1706 @@
+В общем Серег, решил тут тебя обогнать по функционалу XD
+Но к сожалению не получилось, я не админ проекта.
+Тот код, который я тебе скину ниже, включает такие функции как:
+1. Индикатор Печатает (показывает, когда собеседник набирает сообщение)
+2. Статус сообщений (отправлено, доставлено, прочитано)
+3. Удаление сообщений (выбор удалить сообщение для себя или для всех)
+4. Поиск по сообщениям (поиск текста в чате)
+5. Уведомления о новых сообщениях (не то, что ты хотел конечно... но визуальное выделение чатов с непрочитанными сообщениями будет)
+6. Список последних сообщений в чатах (отображение последнего сообщения в списке чатов)
+А вот и непосредственно код, ах да... забыл сказать, код взят за снову самый свежий,
+Поэтому, если будешь вставлять данный код после того, как добавишь какие то функции,
+то будут проблемки... сам понимаешь...
+Крч, вот код ChatsPage.xaml:
+<Page x:Class="_1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО.ChatsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="clr-namespace:_1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО"
+      Title="ChatsPage">
+    <Page.Resources>
+        <local:AvatarUrlToImageSourceConverter x:Key="AvatarUrlConverter"/>
+
+        <!-- Стиль для кнопки "Перевести" -->
+        <Style x:Key="TranslateButtonStyle" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF555555" Offset="0.0"/>
+                        <GradientStop Color="#FF444444" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="Margin" Value="0,2,0,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FF666666" Offset="0.0"/>
+                                            <GradientStop Color="#FF555555" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FF444444" Offset="0.0"/>
+                                            <GradientStop Color="#FF333333" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для ComboBox -->
+        <Style x:Key="CustomComboBoxStyle" TargetType="ComboBox">
+            <!-- Оставляем как в твоем коде -->
+        </Style>
+
+        <!-- Стиль для элементов ComboBox -->
+        <Style TargetType="ComboBoxItem">
+            <!-- Оставляем как в твоем коде -->
+        </Style>
+
+        <!-- Стиль для кнопки "Избранное" -->
+        <Style x:Key="FavoriteButtonStyle" TargetType="Button">
+            <!-- Оставляем как в твоем коде -->
+        </Style>
+    </Page.Resources>
+
+    <Border>
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF1B1B1B" Offset="0.0"/>
+                <GradientStop Color="#FF2B2B2B" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Левая панель (Список чатов) -->
+            <Border Grid.Column="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#FF2B2B2B" Offset="0.0"/>
+                        <GradientStop Color="#FF1B1B1B" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" ShadowDepth="5" BlurRadius="10" Opacity="0.5"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Поле поиска -->
+                    <Border Grid.Row="0" Margin="10" Background="#FF333333" CornerRadius="15" Height="40">
+                        <TextBox x:Name="SearchTextBox" 
+                                 Text="Поиск" 
+                                 Foreground="Gray" 
+                                 Background="Transparent" 
+                                 BorderThickness="0" 
+                                 FontSize="14" 
+                                 FontFamily="Segoe UI" 
+                                 VerticalContentAlignment="Center" 
+                                 Padding="10,0,0,0" 
+                                 GotFocus="SearchTextBox_GotFocus" 
+                                 LostFocus="SearchTextBox_LostFocus"
+                                 TextChanged="SearchTextBox_TextChanged"/>
+                    </Border>
+
+                    <!-- Кнопка "Избранное" -->
+                    <Button x:Name="FavoriteButton" Grid.Row="1" Content="Избранное" Margin="10,0,10,5" Style="{StaticResource FavoriteButtonStyle}" Click="ToggleFavoriteMode_Click"/>
+
+                    <!-- Список чатов -->
+                    <ListBox x:Name="ChatListBox" Grid.Row="2" Margin="10,0,10,0" Background="Transparent" BorderThickness="0" Foreground="White" FontFamily="Segoe UI" SelectionChanged="ChatListBox_SelectionChanged" MouseRightButtonUp="ChatListBox_MouseRightButtonUp">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#FF444444" CornerRadius="10" Padding="10" Margin="0,5" Width="260">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#FF444444"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}" Value="True">
+                                                    <Setter Property="Background" Value="#FF555555"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding HasUnreadMessages}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#FF00FF00"/>
+                                                    <Setter Property="BorderThickness" Value="2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0" Width="40" Height="40">
+                                            <Ellipse Width="40" Height="40" Fill="#FF666666"/>
+                                            <Image Width="40" Height="40" Stretch="UniformToFill" Source="{Binding AvatarUrl, Converter={StaticResource AvatarUrlConverter}}">
+                                                <Image.Clip>
+                                                    <EllipseGeometry RadiusX="20" RadiusY="20" Center="20,20"/>
+                                                </Image.Clip>
+                                                <Image.Style>
+                                                    <Style TargetType="Image">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding AvatarUrl}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding AvatarUrl}" Value="">
+                                                                <Setter Property="Visibility" Value="Hidden"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </Grid>
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="{Binding Login}" Foreground="White" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding LastMessage}" Foreground="Gray" FontSize="12" TextTrimming="CharacterEllipsis" MaxHeight="20"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding LastMessageTime, StringFormat=HH:mm}" Foreground="Gray" FontSize="10" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Шестерёнка -->
+                    <Border Grid.Row="3" Width="50" Height="50" CornerRadius="25" Background="#FF444444" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0">
+                        <TextBlock Text="⚙" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" MouseLeftButtonDown="SettingsButton_Click"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Правая панель (Чат) -->
+            <Grid Grid.Column="1">
+                <Border x:Name="ChatPlaceholder" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Background="#FF444444" CornerRadius="20">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" ShadowDepth="5" BlurRadius="10" Opacity="0.5"/>
+                    </Border.Effect>
+                    <TextBlock Text="Выберите, кому хотели бы написать" Foreground="White" FontSize="16" FontWeight="SemiBold" FontFamily="Segoe UI" TextAlignment="Center" Padding="20,10"/>
+                </Border>
+
+                <Grid x:Name="ChatArea" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Панель управления чатом -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+                        <ComboBox x:Name="TranslationDirectionComboBox" Width="120" Style="{StaticResource CustomComboBoxStyle}">
+                            <ComboBoxItem Content="EN → RU" IsSelected="True"/>
+                            <ComboBoxItem Content="RU → EN"/>
+                        </ComboBox>
+                        <TextBox x:Name="MessageSearchTextBox" Width="200" Margin="10,0,0,0" Text="Поиск в чате" Foreground="Gray" Background="#FF333333" BorderThickness="0" Padding="5" GotFocus="MessageSearchTextBox_GotFocus" LostFocus="MessageSearchTextBox_LostFocus" TextChanged="MessageSearchTextBox_TextChanged"/>
+                    </StackPanel>
+
+                    <!-- Индикатор "Печатает..." -->
+                    <TextBlock x:Name="TypingIndicator" Grid.Row="1" Text="Собеседник печатает..." Foreground="Gray" FontSize="12" Margin="10,0,0,5" Visibility="Collapsed"/>
+
+                    <!-- Список сообщений -->
+                    <ScrollViewer x:Name="ChatScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
+                        <StackPanel x:Name="MessagesPanel" Margin="10"/>
+                    </ScrollViewer>
+
+                    <!-- Поле ввода -->
+                    <Grid Grid.Row="2" Background="#FF333333" Margin="10" Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <TextBox x:Name="MessageTextBox" Height="40" Background="#FF444444" Foreground="White" CaretBrush="White" BorderThickness="0" Width="400" FontSize="14" FontFamily="Segoe UI" Padding="10" Margin="5,0,5,0" KeyDown="MessageTextBox_KeyDown" TextChanged="MessageTextBox_TextChanged">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <Button Content="Отправить" Width="100" Height="40" Background="#FF555555" Foreground="White" BorderThickness="0" FontSize="14" FontFamily="Segoe UI" Cursor="Hand" Margin="5,0,5,0" Click="SendMessage_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="10">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#FF666666"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter Property="Background" Value="#FF777777"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Page>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Вот код ChatsPage.xaml.cs:
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+
+namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
+{
+    public partial class ChatsPage : Page
+    {
+        private readonly DatabaseHelper dbHelper;
+        private readonly int currentUserId;
+        private readonly string currentUserLogin;
+        private string currentAvatarUrl;
+        private int currentChatId = -1;
+        private readonly Dictionary<string, int> chatMapping = new Dictionary<string, int>();
+        private DispatcherTimer messageTimer;
+        private int displayedMessageCount = 0;
+        private readonly TranslationService translationService;
+        private bool isFavoriteMode = false;
+        private bool isTyping = false;
+
+        public ChatsPage(int userId, string userLogin, string avatarUrl = null)
+        {
+            InitializeComponent();
+            dbHelper = new DatabaseHelper();
+            currentUserId = userId;
+            currentUserLogin = userLogin;
+            currentAvatarUrl = avatarUrl;
+            translationService = new TranslationService();
+            LoadChats();
+
+            messageTimer = new DispatcherTimer();
+            messageTimer.Interval = TimeSpan.FromSeconds(1); // Уменьшаем интервал для более быстрого обновления
+            messageTimer.Tick += MessageTimer_Tick;
+
+            this.Loaded += ChatsPage_Loaded;
+        }
+
+        private void ChatsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            var currentUser = dbHelper.GetUserById(currentUserId);
+            if (currentUser != null)
+            {
+                currentAvatarUrl = currentUser.AvatarUrl;
+            }
+            LoadChats();
+        }
+
+        private void MessageTimer_Tick(object sender, EventArgs e)
+        {
+            if (currentChatId != -1)
+            {
+                LoadNewMessages();
+                CheckTypingStatus();
+            }
+        }
+
+        private void CheckTypingStatus()
+        {
+            bool otherUserTyping = dbHelper.IsUserTyping(currentChatId, currentUserId);
+            TypingIndicator.Visibility = otherUserTyping ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void LoadNewMessages()
+        {
+            var messagesInDb = dbHelper.GetMessages(currentChatId);
+            if (messagesInDb.Count != displayedMessageCount)
+            {
+                string selectedChat = GetSelectedChatLogin();
+                if (selectedChat != null)
+                {
+                    OpenChat(selectedChat);
+                }
+            }
+            UpdateMessageStatuses();
+        }
+
+        private void UpdateMessageStatuses()
+        {
+            foreach (var child in MessagesPanel.Children.OfType<StackPanel>())
+            {
+                var messageId = (int?)child.Tag;
+                if (messageId.HasValue)
+                {
+                    var status = dbHelper.GetMessageStatus(messageId.Value);
+                    var statusBlock = child.Children.OfType<StackPanel>().FirstOrDefault()?.Children.OfType<TextBlock>().LastOrDefault();
+                    if (statusBlock != null && statusBlock.Text.StartsWith("✓"))
+                    {
+                        statusBlock.Text = status switch
+                        {
+                            "Sent" => "✓",
+                            "Delivered" => "✓✓",
+                            "Read" => "✓✓ (прочитано)",
+                            _ => "✓"
+                        };
+                    }
+                }
+            }
+        }
+
+        private void LoadChats()
+        {
+            string previouslySelectedChat = GetSelectedChatLogin();
+            ChatListBox.Items.Clear();
+            chatMapping.Clear();
+
+            var users = dbHelper.GetUsers(currentUserId);
+            var favoriteChats = dbHelper.GetFavoriteChats(currentUserId).ToHashSet();
+
+            foreach (var user in users)
+            {
+                int chatId = dbHelper.GetOrCreateChat(currentUserId, user.Id);
+                if (!isFavoriteMode || (isFavoriteMode && favoriteChats.Contains(chatId)))
+                {
+                    var lastMessage = dbHelper.GetLastMessage(chatId);
+                    ChatListBox.Items.Add(new
+                    {
+                        Login = user.Login,
+                        AvatarUrl = user.AvatarUrl,
+                        LastMessage = lastMessage?.MessageText,
+                        LastMessageTime = lastMessage?.Timestamp,
+                        HasUnreadMessages = dbHelper.HasUnreadMessages(chatId, currentUserId)
+                    });
+                    chatMapping[user.Login] = chatId;
+                }
+            }
+
+            if (ChatListBox.Items.Count > 0)
+            {
+                if (previouslySelectedChat != null)
+                {
+                    ChatListBox.SelectedItem = ChatListBox.Items.Cast<dynamic>().FirstOrDefault(item => item.Login == previouslySelectedChat);
+                }
+                if (ChatListBox.SelectedItem == null)
+                {
+                    ChatListBox.SelectedIndex = 0;
+                }
+            }
+            else
+            {
+                ChatListBox.SelectedItem = null;
+                ChatArea.Visibility = Visibility.Collapsed;
+                ChatPlaceholder.Visibility = Visibility.Visible;
+                currentChatId = -1;
+            }
+        }
+
+        private string GetSelectedChatLogin()
+        {
+            if (ChatListBox.SelectedItem != null)
+            {
+                return ((dynamic)ChatListBox.SelectedItem).Login;
+            }
+            return null;
+        }
+
+        private void ChatListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            messageTimer.Stop();
+            if (ChatListBox.SelectedItem != null)
+            {
+                string selectedChat = GetSelectedChatLogin();
+                if (selectedChat != null && chatMapping.ContainsKey(selectedChat))
+                {
+                    currentChatId = chatMapping[selectedChat];
+                    OpenChat(selectedChat);
+                    dbHelper.MarkMessagesAsRead(currentChatId, currentUserId);
+                    LoadChats(); // Обновляем список для снятия выделения непрочитанных
+                }
+            }
+            else
+            {
+                ChatArea.Visibility = Visibility.Collapsed;
+                ChatPlaceholder.Visibility = Visibility.Visible;
+                currentChatId = -1;
+            }
+        }
+
+        private void OpenChat(string chatName)
+        {
+            ChatPlaceholder.Visibility = Visibility.Collapsed;
+            ChatArea.Visibility = Visibility.Visible;
+            MessagesPanel.Children.Clear();
+
+            var messages = dbHelper.GetMessages(currentChatId);
+            messages = messages.OrderBy(m => m.Timestamp).ToList();
+
+            foreach (var message in messages)
+            {
+                bool isSentByMe = message.SenderId == currentUserId;
+                AddMessageToUI(message.Id, message.MessageText, isSentByMe, message.Timestamp, message.Status);
+            }
+
+            displayedMessageCount = messages.Count;
+            messageTimer.Start();
+        }
+
+        private void AddMessageToUI(int messageId, string message, bool isSentByMe, DateTime timestamp, string status)
+        {
+            StackPanel messageContainer = new StackPanel
+            {
+                Margin = new Thickness(5),
+                HorizontalAlignment = isSentByMe ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+                MaxWidth = 450,
+                Tag = messageId
+            };
+
+            StackPanel contentPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = isSentByMe ? HorizontalAlignment.Right : HorizontalAlignment.Left
+            };
+
+            Border messageBorder = new Border
+            {
+                CornerRadius = new CornerRadius(10),
+                Background = isSentByMe ? new SolidColorBrush(Color.FromRgb(85, 85, 85)) : new SolidColorBrush(Color.FromRgb(68, 68, 68)),
+                Padding = new Thickness(10),
+                Margin = new Thickness(0, 2, 5, 2),
+                ContextMenu = CreateMessageContextMenu(messageId, isSentByMe)
+            };
+
+            TextBlock messageBlock = new TextBlock
+            {
+                Text = message,
+                Foreground = Brushes.White,
+                TextWrapping = TextWrapping.Wrap,
+                FontFamily = new FontFamily("Segoe UI"),
+                FontSize = 14
+            };
+
+            messageBorder.Child = messageBlock;
+
+            Button translateButton = new Button
+            {
+                Content = "Перевести",
+                Style = (Style)FindResource("TranslateButtonStyle"),
+                Tag = message
+            };
+            translateButton.Click += TranslateButton_Click;
+
+            TextBlock statusBlock = new TextBlock
+            {
+                Text = status switch
+                {
+                    "Sent" => "✓",
+                    "Delivered" => "✓✓",
+                    "Read" => "✓✓ (прочитано)",
+                    _ => "✓"
+                },
+                Foreground = Brushes.Gray,
+                FontSize = 10,
+                Margin = new Thickness(0, 0, 5, 0)
+            };
+
+            if (isSentByMe)
+            {
+                contentPanel.Children.Add(statusBlock);
+                contentPanel.Children.Add(translateButton);
+                contentPanel.Children.Add(messageBorder);
+            }
+            else
+            {
+                contentPanel.Children.Add(messageBorder);
+                contentPanel.Children.Add(translateButton);
+            }
+
+            TextBlock timestampBlock = new TextBlock
+            {
+                Text = timestamp.ToString("HH:mm"),
+                Foreground = Brushes.Gray,
+                FontSize = 10,
+                HorizontalAlignment = isSentByMe ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+
+            messageContainer.Children.Add(contentPanel);
+            messageContainer.Children.Add(timestampBlock);
+            MessagesPanel.Children.Add(messageContainer);
+
+            messageContainer.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(0.3)
+            });
+
+            ChatScrollViewer.ScrollToEnd();
+        }
+
+        private ContextMenu CreateMessageContextMenu(int messageId, bool isSentByMe)
+        {
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem deleteForMe = new MenuItem { Header = "Удалить у себя" };
+            deleteForMe.Click += (s, e) => DeleteMessage(messageId, false);
+            contextMenu.Items.Add(deleteForMe);
+
+            if (isSentByMe)
+            {
+                MenuItem deleteForAll = new MenuItem { Header = "Удалить у всех" };
+                deleteForAll.Click += (s, e) => DeleteMessage(messageId, true);
+                contextMenu.Items.Add(deleteForAll);
+            }
+
+            return contextMenu;
+        }
+
+        private void DeleteMessage(int messageId, bool deleteForAll)
+        {
+            dbHelper.DeleteMessage(messageId, deleteForAll ? null : currentUserId);
+            OpenChat(GetSelectedChatLogin());
+        }
+
+        private async void TranslateButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button translateButton = sender as Button;
+            string messageText = translateButton.Tag as string;
+            if (string.IsNullOrEmpty(messageText)) return;
+
+            string direction = (TranslationDirectionComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "EN → RU";
+            string sourceLanguage = direction == "EN → RU" ? "en" : "ru";
+            string targetLanguage = direction == "EN → RU" ? "ru" : "en";
+
+            string translatedText = await translationService.TranslateTextAsync(messageText, sourceLanguage, targetLanguage);
+            if (translatedText.Contains("INVALID SOURCE LANGUAGE"))
+            {
+                MessageBox.Show($"Ошибка: Неверный исходный язык ({sourceLanguage}).");
+                return;
+            }
+
+            var messageContainer = translateButton.Parent as StackPanel;
+            messageContainer?.Children.Add(new TextBlock
+            {
+                Text = $"[Перевод]: {translatedText}",
+                Foreground = Brushes.LightGray,
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 12,
+                Margin = new Thickness(10, 0, 0, 5)
+            });
+
+            ChatScrollViewer.ScrollToEnd();
+        }
+
+        private void SendMessage_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(MessageTextBox.Text) && currentChatId != -1)
+            {
+                string newMessage = MessageTextBox.Text;
+                DateTime timestamp = DateTime.Now;
+
+                dbHelper.SaveMessage(currentChatId, currentUserId, newMessage, timestamp);
+                dbHelper.SetTypingStatus(currentChatId, currentUserId, false);
+                isTyping = false;
+
+                OpenChat(GetSelectedChatLogin());
+                MessageTextBox.Clear();
+            }
+        }
+
+        private void MessageTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && !string.IsNullOrEmpty(MessageTextBox.Text) && currentChatId != -1)
+            {
+                SendMessage_Click(sender, e);
+            }
+        }
+
+        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (currentChatId != -1 && !string.IsNullOrEmpty(MessageTextBox.Text) && !isTyping)
+            {
+                dbHelper.SetTypingStatus(currentChatId, currentUserId, true);
+                isTyping = true;
+            }
+            else if (string.IsNullOrEmpty(MessageTextBox.Text) && isTyping)
+            {
+                dbHelper.SetTypingStatus(currentChatId, currentUserId, false);
+                isTyping = false;
+            }
+        }
+
+        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox.Text == "Поиск")
+            {
+                textBox.Text = "";
+                textBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                textBox.Text = "Поиск";
+                textBox.Foreground = Brushes.Gray;
+            }
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = SearchTextBox.Text.ToLower();
+            if (searchText == "поиск") return;
+
+            ChatListBox.Items.Clear();
+            var users = dbHelper.GetUsers(currentUserId);
+            var favoriteChats = dbHelper.GetFavoriteChats(currentUserId).ToHashSet();
+
+            foreach (var user in users)
+            {
+                if (user.Login.ToLower().Contains(searchText))
+                {
+                    int chatId = dbHelper.GetOrCreateChat(currentUserId, user.Id);
+                    if (!isFavoriteMode || (isFavoriteMode && favoriteChats.Contains(chatId)))
+                    {
+                        var lastMessage = dbHelper.GetLastMessage(chatId);
+                        ChatListBox.Items.Add(new
+                        {
+                            Login = user.Login,
+                            AvatarUrl = user.AvatarUrl,
+                            LastMessage = lastMessage?.MessageText,
+                            LastMessageTime = lastMessage?.Timestamp,
+                            HasUnreadMessages = dbHelper.HasUnreadMessages(chatId, currentUserId)
+                        });
+                        chatMapping[user.Login] = chatId;
+                    }
+                }
+            }
+        }
+
+        private void MessageSearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox.Text == "Поиск в чате")
+            {
+                textBox.Text = "";
+                textBox.Foreground = Brushes.White;
+            }
+        }
+
+        private void MessageSearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                textBox.Text = "Поиск в чате";
+                textBox.Foreground = Brushes.Gray;
+            }
+        }
+
+        private void MessageSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = MessageSearchTextBox.Text.ToLower();
+            if (searchText == "поиск в чате" || currentChatId == -1) return;
+
+            MessagesPanel.Children.Clear();
+            var messages = dbHelper.GetMessages(currentChatId).Where(m => m.MessageText.ToLower().Contains(searchText)).OrderBy(m => m.Timestamp).ToList();
+            foreach (var message in messages)
+            {
+                bool isSentByMe = message.SenderId == currentUserId;
+                AddMessageToUI(message.Id, message.MessageText, isSentByMe, message.Timestamp, message.Status);
+            }
+        }
+
+        private void SettingsButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            NavigationService?.Navigate(new SettingsPage(currentUserId, currentUserLogin, currentAvatarUrl));
+        }
+
+        private void ChatListBox_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ChatListBox.SelectedItem != null)
+            {
+                var selectedItem = (dynamic)ChatListBox.SelectedItem;
+                string selectedChat = selectedItem.Login;
+                int chatId = chatMapping[selectedChat];
+                var favoriteChats = dbHelper.GetFavoriteChats(currentUserId).ToHashSet();
+
+                ContextMenu contextMenu = new ContextMenu();
+                MenuItem favoriteItem = new MenuItem
+                {
+                    Header = favoriteChats.Contains(chatId) ? "Убрать из избранного" : "Добавить в избранное"
+                };
+                favoriteItem.Click += (s, args) =>
+                {
+                    if (favoriteChats.Contains(chatId))
+                    {
+                        dbHelper.RemoveFavoriteChat(currentUserId, chatId);
+                    }
+                    else
+                        dbHelper.AddFavoriteChat(currentUserId, chatId);
+                    LoadChats();
+                };
+                contextMenu.Items.Add(favoriteItem);
+                contextMenu.IsOpen = true;
+            }
+        }
+
+        private void ToggleFavoriteMode_Click(object sender, RoutedEventArgs e)
+        {
+            isFavoriteMode = !isFavoriteMode;
+            FavoriteButton.Content = isFavoriteMode ? "Все чаты" : "Избранное";
+            LoadChats();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Вот код DatabaseHelper.cs:
+using System;
+using System.Collections.Generic;
+using MySql.Data.MySqlClient;
+
+namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
+{
+    public class User
+    {
+        public int Id { get; set; }
+        public string Login { get; set; }
+        public string AvatarUrl { get; set; }
+    }
+
+    public class Message
+    {
+        public int Id { get; set; }
+        public int ChatId { get; set; }
+        public int SenderId { get; set; }
+        public string MessageText { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string Status { get; set; }
+        public int? IsDeletedForUser { get; set; }
+    }
+
+    public class DatabaseHelper
+    {
+        private readonly string connectionString = "Server=tipesoto.beget.app;Port=3306;Database=default-db;User=default-db;Password=Lonsvi_1;";
+
+        public DatabaseHelper()
+        {
+            InitializeDatabase();
+        }
+
+        private void InitializeDatabase()
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Создание таблицы Users с полем AvatarUrl
+                string createUsersTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS Users (
+                        Id INT AUTO_INCREMENT PRIMARY KEY,
+                        Login VARCHAR(255) NOT NULL UNIQUE,
+                        Password VARCHAR(255) NOT NULL,
+                        AvatarUrl TEXT
+                    )";
+                using (var command = new MySqlCommand(createUsersTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                // Создание таблицы Chats
+                string createChatsTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS Chats (
+                        Id INT AUTO_INCREMENT PRIMARY KEY,
+                        User1Id INT NOT NULL,
+                        User2Id INT NOT NULL,
+                        FOREIGN KEY (User1Id) REFERENCES Users(Id),
+                        FOREIGN KEY (User2Id) REFERENCES Users(Id)
+                    )";
+                using (var command = new MySqlCommand(createChatsTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                // Создание таблицы Messages с новыми полями Status и IsDeletedForUser
+                string createMessagesTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS Messages (
+                        Id INT AUTO_INCREMENT PRIMARY KEY,
+                        ChatId INT NOT NULL,
+                        SenderId INT NOT NULL,
+                        MessageText TEXT NOT NULL,
+                        Timestamp DATETIME NOT NULL,
+                        Status ENUM('Sent', 'Delivered', 'Read') DEFAULT 'Sent',
+                        IsDeletedForUser INT NULL,
+                        FOREIGN KEY (ChatId) REFERENCES Chats(Id),
+                        FOREIGN KEY (SenderId) REFERENCES Users(Id),
+                        FOREIGN KEY (IsDeletedForUser) REFERENCES Users(Id)
+                    )";
+                using (var command = new MySqlCommand(createMessagesTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                // Создание таблицы FavoriteChats
+                string createFavoriteChatsTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS FavoriteChats (
+                        UserId INT NOT NULL,
+                        ChatId INT NOT NULL,
+                        PRIMARY KEY (UserId, ChatId),
+                        FOREIGN KEY (UserId) REFERENCES Users(Id),
+                        FOREIGN KEY (ChatId) REFERENCES Chats(Id)
+                    )";
+                using (var command = new MySqlCommand(createFavoriteChatsTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                // Создание таблицы TypingStatus для индикатора "Печатает..."
+                string createTypingStatusTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS TypingStatus (
+                        ChatId INT NOT NULL,
+                        UserId INT NOT NULL,
+                        IsTyping BOOLEAN DEFAULT FALSE,
+                        PRIMARY KEY (ChatId, UserId),
+                        FOREIGN KEY (ChatId) REFERENCES Chats(Id),
+                        FOREIGN KEY (UserId) REFERENCES Users(Id)
+                    )";
+                using (var command = new MySqlCommand(createTypingStatusTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // Методы для избранных чатов
+        public void AddFavoriteChat(int userId, int chatId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "INSERT IGNORE INTO FavoriteChats (UserId, ChatId) VALUES (@UserId, @ChatId)";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void RemoveFavoriteChat(int userId, int chatId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "DELETE FROM FavoriteChats WHERE UserId = @UserId AND ChatId = @ChatId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<int> GetFavoriteChats(int userId)
+        {
+            var favoriteChats = new List<int>();
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT ChatId FROM FavoriteChats WHERE UserId = @UserId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            favoriteChats.Add(reader.GetInt32(0));
+                        }
+                    }
+                }
+            }
+            return favoriteChats;
+        }
+
+        // Методы для пользователей
+        public User GetUserById(int userId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Id, Login, AvatarUrl FROM Users WHERE Id = @UserId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new User
+                            {
+                                Id = reader.GetInt32("Id"),
+                                Login = reader.GetString("Login"),
+                                AvatarUrl = reader.IsDBNull(reader.GetOrdinal("AvatarUrl")) ? null : reader.GetString("AvatarUrl")
+                            };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public bool RegisterUser(string login, string password)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "INSERT INTO Users (Login, Password) VALUES (@Login, @Password)";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Login", login);
+                    command.Parameters.AddWithValue("@Password", password);
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        return true;
+                    }
+                    catch (MySqlException)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public (int? UserId, string Login, string AvatarUrl) LoginUser(string login, string password)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Id, Login, AvatarUrl FROM Users WHERE Login = @Login AND Password = @Password";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Login", login);
+                    command.Parameters.AddWithValue("@Password", password);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string avatarUrl = reader.IsDBNull(2) ? null : reader.GetString(2);
+                            return (reader.GetInt32(0), reader.GetString(1), avatarUrl);
+                        }
+                    }
+                }
+            }
+            return (null, null, null);
+        }
+
+        public List<(int Id, string Login, string AvatarUrl)> GetUsers(int excludeUserId)
+        {
+            var users = new List<(int Id, string Login, string AvatarUrl)>();
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Id, Login, AvatarUrl FROM Users WHERE Id != @UserId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@UserId", excludeUserId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string avatarUrl = reader.IsDBNull(2) ? null : reader.GetString(2);
+                            users.Add((reader.GetInt32(0), reader.GetString(1), avatarUrl));
+                        }
+                    }
+                }
+            }
+            return users;
+        }
+
+        public void UpdateAvatarUrl(int userId, string avatarUrl)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE Users SET AvatarUrl = @AvatarUrl WHERE Id = @UserId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@AvatarUrl", (object)avatarUrl ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // Методы для чатов
+        public int GetOrCreateChat(int user1Id, int user2Id)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Id FROM Chats WHERE (User1Id = @User1Id AND User2Id = @User2Id) OR (User1Id = @User2Id AND User2Id = @User1Id)";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@User1Id", user1Id);
+                    command.Parameters.AddWithValue("@User2Id", user2Id);
+                    var result = command.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+
+                string insertQuery = "INSERT INTO Chats (User1Id, User2Id) VALUES (@User1Id, @User2Id); SELECT LAST_INSERT_ID();";
+                using (var command = new MySqlCommand(insertQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@User1Id", user1Id);
+                    command.Parameters.AddWithValue("@User2Id", user2Id);
+                    return Convert.ToInt32(command.ExecuteScalar());
+                }
+            }
+        }
+
+        // Методы для сообщений
+        public void SaveMessage(int chatId, int senderId, string messageText, DateTime timestamp)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "INSERT INTO Messages (ChatId, SenderId, MessageText, Timestamp, Status) VALUES (@ChatId, @SenderId, @MessageText, @Timestamp, 'Sent')";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.Parameters.AddWithValue("@SenderId", senderId);
+                    command.Parameters.AddWithValue("@MessageText", messageText);
+                    command.Parameters.AddWithValue("@Timestamp", timestamp);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<Message> GetMessages(int chatId)
+        {
+            var messages = new List<Message>();
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = @"
+                    SELECT Id, SenderId, MessageText, Timestamp, Status, IsDeletedForUser 
+                    FROM Messages 
+                    WHERE ChatId = @ChatId AND (IsDeletedForUser IS NULL OR IsDeletedForUser != @CurrentUserId)
+                    ORDER BY Timestamp";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.Parameters.AddWithValue("@CurrentUserId", chatId); // Предполагаем, что текущий пользователь — один из участников чата
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            messages.Add(new Message
+                            {
+                                Id = reader.GetInt32("Id"),
+                                SenderId = reader.GetInt32("SenderId"),
+                                MessageText = reader.GetString("MessageText"),
+                                Timestamp = reader.GetDateTime("Timestamp"),
+                                Status = reader.GetString("Status"),
+                                IsDeletedForUser = reader.IsDBNull(reader.GetOrdinal("IsDeletedForUser")) ? null : (int?)reader.GetInt32("IsDeletedForUser")
+                            });
+                        }
+                    }
+                }
+            }
+            return messages;
+        }
+
+        public List<(int SenderId, string MessageText, DateTime Timestamp)> GetMessagesAfter(int chatId, DateTime afterTime)
+        {
+            var messages = new List<(int SenderId, string MessageText, DateTime Timestamp)>();
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT SenderId, MessageText, Timestamp FROM Messages WHERE ChatId = @ChatId AND Timestamp > @AfterTime ORDER BY Timestamp ASC";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.Parameters.AddWithValue("@AfterTime", afterTime);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            messages.Add((
+                                reader.GetInt32(0),
+                                reader.GetString(1),
+                                reader.GetDateTime(2)
+                            ));
+                        }
+                    }
+                }
+            }
+            return messages;
+        }
+
+        public Message GetLastMessage(int chatId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Id, SenderId, MessageText, Timestamp, Status, IsDeletedForUser FROM Messages WHERE ChatId = @ChatId ORDER BY Timestamp DESC LIMIT 1";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Message
+                            {
+                                Id = reader.GetInt32("Id"),
+                                SenderId = reader.GetInt32("SenderId"),
+                                MessageText = reader.GetString("MessageText"),
+                                Timestamp = reader.GetDateTime("Timestamp"),
+                                Status = reader.GetString("Status"),
+                                IsDeletedForUser = reader.IsDBNull(reader.GetOrdinal("IsDeletedForUser")) ? null : (int?)reader.GetInt32("IsDeletedForUser")
+                            };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public bool HasUnreadMessages(int chatId, int userId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Messages WHERE ChatId = @ChatId AND SenderId != @UserId AND Status != 'Read'";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    return (long)command.ExecuteScalar() > 0;
+                }
+            }
+        }
+
+        public void MarkMessagesAsRead(int chatId, int userId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE Messages SET Status = 'Read' WHERE ChatId = @ChatId AND SenderId != @UserId AND Status != 'Read'";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public string GetMessageStatus(int messageId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Status FROM Messages WHERE Id = @MessageId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@MessageId", messageId);
+                    return command.ExecuteScalar()?.ToString() ?? "Sent";
+                }
+            }
+        }
+
+        public void DeleteMessage(int messageId, int? userId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = userId.HasValue
+                    ? "UPDATE Messages SET IsDeletedForUser = @UserId WHERE Id = @MessageId"
+                    : "DELETE FROM Messages WHERE Id = @MessageId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@MessageId", messageId);
+                    if (userId.HasValue) command.Parameters.AddWithValue("@UserId", userId.Value);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // Методы для индикатора "Печатает..."
+        public void SetTypingStatus(int chatId, int userId, bool isTyping)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = @"
+                    INSERT INTO TypingStatus (ChatId, UserId, IsTyping) 
+                    VALUES (@ChatId, @UserId, @IsTyping) 
+                    ON DUPLICATE KEY UPDATE IsTyping = @IsTyping";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@IsTyping", isTyping);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public bool IsUserTyping(int chatId, int currentUserId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT IsTyping FROM TypingStatus WHERE ChatId = @ChatId AND UserId != @UserId";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ChatId", chatId);
+                    command.Parameters.AddWithValue("@UserId", currentUserId);
+                    var result = command.ExecuteScalar();
+                    return result != null && Convert.ToBoolean(result);
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+А ВОТ ТЕПЕРЬ ВНИМАТЕЛЬНО!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Что изменено и добавлено:
+Класс Message:
+Добавлен для удобной работы с сообщениями, включая новые поля Id, Status, и IsDeletedForUser.
+
+Обновление структуры базы данных:
+В таблице Messages добавлены поля Status (ENUM: 'Sent', 'Delivered', 'Read') и IsDeletedForUser (для частичного удаления).
+
+Создана новая таблица TypingStatus для отслеживания статуса "Печатает...".
+
+Методы для работы с сообщениями:
+GetMessages: Теперь возвращает объект Message с учетом Id, Status, и IsDeletedForUser. Фильтрует сообщения, удаленные для текущего пользователя.
+
+GetLastMessage: Возвращает последнее сообщение в чате с полной информацией.
+
+HasUnreadMessages: Проверяет наличие непрочитанных сообщений.
+
+MarkMessagesAsRead: Помечает сообщения как прочитанные.
+
+GetMessageStatus: Получает статус конкретного сообщения.
+
+DeleteMessage: Удаляет сообщение либо полностью, либо только для конкретного пользователя.
+
+Методы для индикатора "Печатает...":
+SetTypingStatus: Устанавливает статус "Печатает..." для пользователя в чате.
+
+IsUserTyping: Проверяет, печатает ли собеседник.
+
+Обновление существующих методов:
+SaveMessage: Теперь добавляет сообщение со статусом "Sent" по умолчанию.
+
+Как это использовать с твоим кодом ChatsPage.xaml.cs:
+Замени возвращаемый тип метода GetMessages в ChatsPage.xaml.cs с List<(int SenderId, string MessageText, DateTime Timestamp)> на List<Message>.
+
+Обнови вызовы методов в ChatsPage.xaml.cs, чтобы использовать новые поля Message.Id, Message.Status, и т.д.
+
+Например, в OpenChat и AddMessageToUI используй message.Id, message.Status вместо старого кортежа.
+
+Пример обновления в ChatsPage.xaml.cs:
+csharp
+
+private void OpenChat(string chatName)
+{
+    ChatPlaceholder.Visibility = Visibility.Collapsed;
+    ChatArea.Visibility = Visibility.Visible;
+    MessagesPanel.Children.Clear();
+
+    var messages = dbHelper.GetMessages(currentChatId);
+    messages = messages.OrderBy(m => m.Timestamp).ToList();
+
+    foreach (var message in messages)
+    {
+        bool isSentByMe = message.SenderId == currentUserId;
+        AddMessageToUI(message.Id, message.MessageText, isSentByMe, message.Timestamp, message.Status);
+    }
+
+    displayedMessageCount = messages.Count;
+    messageTimer.Start();
+}
+
+private void AddMessageToUI(int messageId, string message, bool isSentByMe, DateTime timestamp, string status)
+{
+    // Используй messageId и status в UI
+}
+
+Дополнительные шаги:
+Обнови базу данных: Выполни следующие SQL-запросы, чтобы добавить новые поля и таблицу:
+sql
+
+ALTER TABLE Messages ADD COLUMN Status ENUM('Sent', 'Delivered', 'Read') DEFAULT 'Sent';
+ALTER TABLE Messages ADD COLUMN IsDeletedForUser INT NULL;
+CREATE TABLE TypingStatus (
+    ChatId INT NOT NULL,
+    UserId INT NOT NULL,
+    IsTyping BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (ChatId, UserId),
+    FOREIGN KEY (ChatId) REFERENCES Chats(Id),
+    FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+
+Проверь подключение: Убедись, что строка подключения (connectionString) работает корректно.
+
+Тестирование: Проверь все новые методы, особенно удаление сообщений и индикатор "Печатает...".
+
+Если у тебя возникнут вопросы или нужно помочь с интеграцией в ChatsPage.xaml.cs, напиши! :)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ПУНКТЫ ВЫШЕ Я НЕ ВЫПОЛНЯЛ (НЕ СМОГ)
+НО У МЕНЯ ВЫСВЕТИЛАСЬ ОШИБКА:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ошибки в ChatsPage.xamlУсловное выражение недопустимо в версии языка 7.3, поскольку между "<NULL>" и "int" не найден общий тип. Для использования преобразования с целевым типом обновите язык до версии 9.0 или более поздней.
+Компонент "рекурсивные шаблоны" недоступен в C# 7.3. Используйте версию языка 8.0 или выше.
+Компонент "рекурсивные шаблоны" недоступен в C# 7.3. Используйте версию языка 8.0 или выше.
+Компонент "рекурсивные шаблоны" недоступен в C# 7.3. Используйте версию языка 8.0 или выше.
+Компонент "рекурсивные шаблоны" недоступен в C# 7.3. Используйте версию языка 8.0 или выше.
+
+Ошибки, которые ты описал, связаны с тем, что в твоем проекте используется версия языка C# 7.3, а некоторые конструкции в коде требуют более новой версии (например, C# 8.0 или 9.0). Это связано с использованием современных возможностей языка, таких как рекурсивные шаблоны (is с паттернами) или работа с null в условных выражениях.
+Чтобы исправить эти ошибки, тебе нужно обновить версию языка C# в проекте. Вот пошаговое решение:
+1. Обновление версии языка C#
+Открой файл проекта:
+Найди файл с расширением .csproj в корне твоего проекта (например, _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО.csproj).
+
+Открой его в текстовом редакторе (или прямо в Visual Studio, щелкнув правой кнопкой → "Edit Project File").
+
+Обнови версию языка:
+Найди или добавь секцию <PropertyGroup> и укажи версию языка LangVersion. Например:
+xml
+
+<PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+</PropertyGroup>
+
+Если <LangVersion> уже есть, замени текущую версию (например, 7.3) на 9.0 или latest.
+
+Сохрани изменения и перезагрузи проект в Visual Studio.
+
+Проверь версию .NET:
+Убедись, что твой проект использует .NET Framework или .NET Core, совместимый с C# 9.0:
+Для .NET Framework 4.8 поддерживается C# 9.0.
+
+Для .NET Core/5/6 и выше — тоже поддерживается.
+
+Если указано что-то вроде <TargetFramework>net472</TargetFramework>, обнови до <TargetFramework>net48</TargetFramework> или более новой версии (например, net6.0).
+
+Пример полного .csproj:
+xml
+
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+</Project>
+
+2. Возможные проблемные места в ChatsPage.xaml.cs
+Ошибки, связанные с "рекурсивными шаблонами" и "условными выражениями", могут возникать в местах, где используются конструкции вроде is, switch expressions, или работа с null. Давай проверим твой код ChatsPage.xaml.cs на предмет таких мест и исправим их, если они есть.
+Ты предоставил только ChatsPage.xaml, но не обновленный ChatsPage.xaml.cs. Я предполагаю, что ты используешь мой улучшенный код ChatsPage.xaml.cs из предыдущего ответа. Вот несколько примеров, где могли возникнуть проблемы с C# 7.3:
+Пример 1: Условное выражение с null
+csharp
+
+string direction = (TranslationDirectionComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "EN → RU";
+
+В C# 7.3 это может вызвать ошибку, если типы не совместимы. В C# 9.0 это работает нормально. Если ошибка здесь, убедись, что версия языка обновлена.
+Пример 2: Рекурсивные шаблоны
+csharp
+
+if (ChatListBox.SelectedItem is { } selectedItem)
+{
+    string selectedChat = selectedItem.Login;
+}
+
+Конструкция is { } требует C# 8.0+. В C# 7.3 нужно заменить на:
+csharp
+
+if (ChatListBox.SelectedItem != null)
+{
+    var selectedItem = (dynamic)ChatListBox.SelectedItem;
+    string selectedChat = selectedItem.Login;
+}
+
+Пример 3: Switch Expression
+csharp
+
+statusBlock.Text = status switch
+{
+    "Sent" => "✓",
+    "Delivered" => "✓✓",
+    "Read" => "✓✓ (прочитано)",
+    _ => "✓"
+};
+
+Switch-выражения появились в C# 8.0. Для C# 7.3 нужно использовать обычный switch:
+csharp
+
+switch (status)
+{
+    case "Sent":
+        statusBlock.Text = "✓";
+        break;
+    case "Delivered":
+        statusBlock.Text = "✓✓";
+        break;
+    case "Read":
+        statusBlock.Text = "✓✓ (прочитано)";
+        break;
+    default:
+        statusBlock.Text = "✓";
+        break;
+}
+
+3. Исправление без обновления версии языка (если обновление невозможно)
+Если ты не можешь обновить версию языка (например, из-за старой версии .NET Framework), я могу переписать код ChatsPage.xaml.cs так, чтобы он работал в C# 7.3. Укажи, если это нужно, и я предоставлю адаптированную версию.
+4. Проверка ChatsPage.xaml
+Твой ChatsPage.xaml сам по себе не содержит C#-кода, поэтому ошибки в нем могут быть связаны только с привязками или синтаксисом XAML. Убедись, что:
+Все ресурсы (например, AvatarUrlToImageSourceConverter) определены корректно.
+
+Все имена элементов (например, ChatListBox, MessageTextBox) совпадают с тем, что ожидает код в ChatsPage.xaml.cs.
+
+Если ошибки возникают из-за ChatsPage.xaml.cs, а не XAML, пожалуйста, предоставь полный актуальный код ChatsPage.xaml.cs, который ты используешь, чтобы я мог точно указать проблемные строки и исправить их.
+Что делать дальше:
+Попробуй обновить версию языка, как описано в пункте 1.
+
+Если это решит проблему — отлично, код будет работать как есть.
+
+Если нет, или ты хочешь остаться на C# 7.3, напиши, и я адаптирую ChatsPage.xaml.cs под старую версию языка.
+
+Дай знать, что получилось или какие конкретно строки в ChatsPage.xaml.cs вызывают ошибки! :)
+
+
+
+
+

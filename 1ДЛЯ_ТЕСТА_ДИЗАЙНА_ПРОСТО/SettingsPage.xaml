@@ -1,0 +1,140 @@
+﻿<Page x:Class="_1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="SettingsPage">
+    <Page.Resources>
+        <!-- Стиль для кнопок -->
+        <Style x:Key="CustomButtonStyle" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF555555" Offset="0.0"/>
+                        <GradientStop Color="#FF444444" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FF666666" Offset="0.0"/>
+                                            <GradientStop Color="#FF555555" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FF444444" Offset="0.0"/>
+                                            <GradientStop Color="#FF333333" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для текстового поля -->
+        <Style x:Key="CustomTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#FF444444"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Border>
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF1B1B1B" Offset="0.0"/>
+                <GradientStop Color="#FF2B2B2B" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Кнопка "Назад" -->
+                <RowDefinition Height="Auto"/>
+                <!-- Аватар -->
+                <RowDefinition Height="Auto"/>
+                <!-- Поле для URL -->
+                <RowDefinition Height="Auto"/>
+                <!-- Кнопка "Сохранить аватар" -->
+                <RowDefinition Height="Auto"/>
+                <!-- Чекбокс -->
+                <RowDefinition Height="*"/>
+                <!-- Пространство -->
+                <RowDefinition Height="Auto"/>
+                <!-- Кнопка "Выйти" -->
+            </Grid.RowDefinitions>
+
+            <!-- Кнопка "Назад" -->
+            <Button Grid.Row="0" Content="⬅ Назад" Width="120" Height="40"
+                    HorizontalAlignment="Left" Style="{StaticResource CustomButtonStyle}"
+                    Click="BackToChats_Click"/>
+
+            <!-- Аватар -->
+            <Border Grid.Row="1" Width="100" Height="100" CornerRadius="50" Background="#FF666666" 
+                    HorizontalAlignment="Center" Margin="0,20">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" ShadowDepth="5" BlurRadius="10" Opacity="0.5"/>
+                </Border.Effect>
+                <Image x:Name="AvatarImage" Stretch="UniformToFill">
+                    <Image.Clip>
+                        <EllipseGeometry RadiusX="50" RadiusY="50" Center="50,50"/>
+                    </Image.Clip>
+                </Image>
+            </Border>
+
+            <!-- Поле для ввода URL аватара -->
+            <TextBox x:Name="AvatarUrlTextBox" Grid.Row="2" Width="300" Margin="10" 
+                     Style="{StaticResource CustomTextBoxStyle}" TextWrapping="Wrap"/>
+
+            <!-- Кнопка для сохранения URL -->
+            <Button Grid.Row="3" Content="Сохранить аватар" Width="150" Height="40" Margin="10"
+                    Style="{StaticResource CustomButtonStyle}" Click="SaveAvatarUrl_Click"/>
+
+            
+
+            <!-- Кнопка выхода -->
+            <Button Grid.Row="6" Content="Выйти" Width="100" Height="40" Margin="10"
+                    Style="{StaticResource CustomButtonStyle}" Click="Logout_Click"/>
+        </Grid>
+    </Border>
+</Page>
