@@ -418,7 +418,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
                         {
                             bool isOnline = reader.GetInt32(0) == 1;
                             DateTime? lastSeen = reader.IsDBNull(1) ? (DateTime?)null : DateTime.Parse(reader.GetString(1));
-                            bool isTyping = reader.GetInt32(2) == 1;
+                            bool isTyping = reader.GetInt32(2) == 1; //
                             return (isOnline, lastSeen, isTyping);
                         }
                     }
