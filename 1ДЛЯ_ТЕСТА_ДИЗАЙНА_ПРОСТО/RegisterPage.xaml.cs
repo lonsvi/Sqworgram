@@ -11,88 +11,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         {
             InitializeComponent();
             dbHelper = new DatabaseHelper();
-
-            // Подписываемся на события изменения текста и фокуса
-            LoginTextBox.TextChanged += LoginTextBox_TextChanged;
-            LoginTextBox.GotFocus += LoginTextBox_GotFocus;
-            LoginTextBox.LostFocus += LoginTextBox_LostFocus;
-
-            PasswordBox.PasswordChanged += PasswordBox_PasswordChanged;
-            PasswordBox.GotFocus += PasswordBox_GotFocus;
-            PasswordBox.LostFocus += PasswordBox_LostFocus;
-
-            ConfirmPasswordBox.PasswordChanged += ConfirmPasswordBox_PasswordChanged;
-            ConfirmPasswordBox.GotFocus += ConfirmPasswordBox_GotFocus;
-            ConfirmPasswordBox.LostFocus += ConfirmPasswordBox_LostFocus;
-        }
-
-        // Обработчики для TextBox (Логин)
-        private void LoginTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            UpdateLoginPlaceholderVisibility();
-        }
-
-        private void LoginTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateLoginPlaceholderVisibility();
-        }
-
-        private void LoginTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateLoginPlaceholderVisibility();
-        }
-
-        private void UpdateLoginPlaceholderVisibility()
-        {
-            LoginPlaceholder.Visibility = string.IsNullOrEmpty(LoginTextBox.Text) && !LoginTextBox.IsKeyboardFocused
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
-        // Обработчики для PasswordBox (Пароль)
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            UpdatePasswordPlaceholderVisibility();
-        }
-
-        private void PasswordBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            UpdatePasswordPlaceholderVisibility();
-        }
-
-        private void PasswordBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UpdatePasswordPlaceholderVisibility();
-        }
-
-        private void UpdatePasswordPlaceholderVisibility()
-        {
-            PasswordPlaceholder.Visibility = string.IsNullOrEmpty(PasswordBox.Password) && !PasswordBox.IsKeyboardFocused
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
-        // Обработчики для ConfirmPasswordBox (Подтверждение пароля)
-        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            UpdateConfirmPasswordPlaceholderVisibility();
-        }
-
-        private void ConfirmPasswordBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateConfirmPasswordPlaceholderVisibility();
-        }
-
-        private void ConfirmPasswordBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateConfirmPasswordPlaceholderVisibility();
-        }
-
-        private void UpdateConfirmPasswordPlaceholderVisibility()
-        {
-            ConfirmPasswordPlaceholder.Visibility = string.IsNullOrEmpty(ConfirmPasswordBox.Password) && !ConfirmPasswordBox.IsKeyboardFocused
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            // Логика для плейсхолдеров больше не нужна, так как дизайн изменился
         }
 
         // Обработка нажатия на «Зарегистрироваться»
@@ -119,7 +38,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
             if (success)
             {
                 MessageBox.Show("Регистрация успешна! Теперь вы можете войти.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                this.NavigationService.Navigate(new LoginPage());
+                this.NavigationService?.Navigate(new LoginPage());
             }
             else
             {
@@ -130,7 +49,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         // Обработка нажатия на «Назад»
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new LoginPage());
+            this.NavigationService?.Navigate(new LoginPage());
         }
     }
 }

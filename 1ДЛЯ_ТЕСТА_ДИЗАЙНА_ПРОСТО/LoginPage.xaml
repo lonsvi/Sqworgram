@@ -4,33 +4,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d"
-      Title="LoginPage" Width="1000" Height="600">
+      Title="LoginPage" d:DesignHeight="600" d:DesignWidth="1000">
 
     <Page.Resources>
-        <!-- ИЗМЕНЕНИЕ: Возвращена серая палитра с градиентами -->
-        <LinearGradientBrush x:Key="PageBackground" StartPoint="0.5,0" EndPoint="0.5,1">
-            <GradientStop Color="#FF3C3C3C" Offset="0"/>
-            <GradientStop Color="#FF1E1E1E" Offset="1"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="PanelBackground" StartPoint="0.5,0" EndPoint="0.5,1">
-            <GradientStop Color="#FF2A2A2A" Offset="0.0"/>
-            <GradientStop Color="#FF1E1E1E" Offset="1.0"/>
-        </LinearGradientBrush>
-
-        <!-- ИСПРАВЛЕНИЕ: Разделил ресурс на Color и SolidColorBrush для избежания ошибки парсера XAML -->
+        <!-- Цветовая палитра -->
         <Color x:Key="AccentColorValue">#FF007AFF</Color>
         <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
-        <!-- Яркий акцент для контраста с серым -->
-
-        <SolidColorBrush x:Key="AccentGrayColor" Color="#FF555555"/>
-        <SolidColorBrush x:Key="AccentGrayHoverColor" Color="#FF6B6B6B"/>
-        <SolidColorBrush x:Key="AccentGrayPressedColor" Color="#FF4A4A4A"/>
-
-        <SolidColorBrush x:Key="TextColor" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="SubtleTextColor" Color="#FF8A9BAB"/>
+        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
+        <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
         <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
+        <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
+        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
 
-        <!-- НОВОЕ: Анимации для кнопок и полей ввода -->
+        <!-- Анимации -->
         <Storyboard x:Key="ButtonHoverOn">
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.03" Duration="0:0:0.1"/>
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.03" Duration="0:0:0.1"/>
@@ -40,30 +27,38 @@
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/>
         </Storyboard>
         <Storyboard x:Key="ControlFocusOn">
-            <!-- ИСПРАВЛЕНИЕ ОШИБКИ: Явно указываем, что анимировать нужно элемент с именем "border" внутри шаблона -->
             <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.4" Duration="0:0:0.2"/>
         </Storyboard>
         <Storyboard x:Key="ControlFocusOff">
-            <!-- ИСПРАВЛЕНИЕ ОШИБКИ: Явно указываем, что анимировать нужно элемент с именем "border" внутри шаблона -->
             <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0" Duration="0:0:0.2"/>
         </Storyboard>
 
+        <!-- НОВОЕ: Анимации для "стеклянных капель" -->
+        <Storyboard x:Key="BlobAnimation1" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.2" Duration="0:0:25"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.2" Duration="0:0:25"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="90" Duration="0:0:30"/>
+        </Storyboard>
+        <Storyboard x:Key="BlobAnimation2" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1.2" To="1" Duration="0:0:35"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1.2" To="1" Duration="0:0:35"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="-70" Duration="0:0:40"/>
+        </Storyboard>
 
-        <!-- Общий стиль для полей ввода -->
+        <!-- Стили для полей ввода -->
         <Style x:Key="ModernTextBoxBase" TargetType="Control">
             <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="12"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Control">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="1" BorderBrush="Transparent">
-                            <!-- НОВОЕ: Эффект тени для анимации фокуса -->
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
                             <Border.Effect>
-                                <!-- ИСПРАВЛЕНИЕ: Теперь используется ресурс типа Color, а не Brush -->
                                 <DropShadowEffect x:Name="shadow" ShadowDepth="0" Color="{StaticResource AccentColorValue}" BlurRadius="10" Opacity="0"/>
                             </Border.Effect>
                             <ScrollViewer x:Name="PART_ContentHost"/>
@@ -71,7 +66,6 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocused" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
-                                <!-- НОВОЕ: Запуск анимации при фокусе -->
                                 <Trigger.EnterActions>
                                     <BeginStoryboard Storyboard="{StaticResource ControlFocusOn}"/>
                                 </Trigger.EnterActions>
@@ -84,7 +78,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <Style x:Key="ModernTextBox" TargetType="TextBox" BasedOn="{StaticResource ModernTextBoxBase}">
             <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
         </Style>
@@ -92,20 +85,19 @@
             <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
         </Style>
 
-        <!-- Стиль для основной (серой) кнопки -->
-        <Style x:Key="AccentButton" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource AccentGrayColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
-            <Setter Property="FontSize" Value="16"/>
+        <!-- Стили для кнопок -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10">
-                            <!-- НОВОЕ: Трансформация для анимации увеличения -->
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
                             <Border.RenderTransform>
                                 <ScaleTransform ScaleX="1" ScaleY="1" CenterX="125" CenterY="22.5"/>
                             </Border.RenderTransform>
@@ -113,8 +105,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentGrayHoverColor}"/>
-                                <!-- НОВОЕ: Анимации при наведении мыши -->
+                                <Setter Property="Opacity" Value="0.9"/>
                                 <Trigger.EnterActions>
                                     <BeginStoryboard Storyboard="{StaticResource ButtonHoverOn}"/>
                                 </Trigger.EnterActions>
@@ -123,7 +114,7 @@
                                 </Trigger.ExitActions>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentGrayPressedColor}"/>
+                                <Setter Property="Opacity" Value="0.7"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -133,7 +124,8 @@
 
         <Style x:Key="TextButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource SubtleTextColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -157,50 +149,87 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{StaticResource PageBackground}">
-        <!-- НОВОЕ: Триггер для анимации при загрузке страницы -->
-        <Grid.Triggers>
-            <EventTrigger RoutedEvent="Loaded">
-                <BeginStoryboard>
-                    <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="LoginPanel" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" />
-                        <ThicknessAnimation Storyboard.TargetName="LoginPanel" Storyboard.TargetProperty="(FrameworkElement.Margin)" From="0,-50,0,50" To="0" Duration="0:0:0.5">
-                            <ThicknessAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseOut"/>
-                            </ThicknessAnimation.EasingFunction>
-                        </ThicknessAnimation>
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-        </Grid.Triggers>
+    <Grid Background="{StaticResource PrimaryBackgroundColor}" ClipToBounds="True">
+        <!-- НОВОЕ: Контейнер для анимированных "капель" -->
+        <Grid>
+            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#4A00E0" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <BlurEffect Radius="150"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterX="200" CenterY="200"/>
+                        <RotateTransform CenterX="200" CenterY="200"/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation1}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
 
-        <Border x:Name="LoginPanel" 
-                CornerRadius="20"
-                Width="400"
-                Background="{StaticResource PanelBackground}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Opacity="0"
-                d:Opacity="1">
-            <!-- ИСПРАВЛЕНИЕ: Добавлена видимость в дизайнере -->
+            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#8E2DE2" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <BlurEffect Radius="200"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterX="250" CenterY="250"/>
+                        <RotateTransform CenterX="250" CenterY="250"/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation2}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+        </Grid>
+
+        <Border x:Name="LoginPanel" Background="#992B2B2B" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Opacity" Value="0"/>
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4"/>
+                                    <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,-30,0,30" To="0" Duration="0:0:0.4">
+                                        <ThicknessAnimation.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </ThicknessAnimation.EasingFunction>
+                                    </ThicknessAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
             <Border.Effect>
-                <DropShadowEffect Color="Black" ShadowDepth="0" BlurRadius="30" Opacity="0.6"/>
+                <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.4" BlurRadius="30"/>
             </Border.Effect>
 
-            <StackPanel Margin="40">
-                <TextBlock Text="Вход в мессенджер" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,30"/>
-
-                <Grid Margin="0,0,0,15">
-                    <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" TextChanged="LoginTextBox_TextChanged" GotFocus="LoginTextBox_GotFocus" LostFocus="LoginTextBox_LostFocus"/>
-                    <TextBlock x:Name="LoginPlaceholder" Text="Логин" Foreground="{StaticResource SubtleTextColor}" FontSize="16" Padding="12" IsHitTestVisible="False" VerticalAlignment="Center"/>
-                </Grid>
-
-                <Grid Margin="0,0,0,30">
-                    <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" PasswordChanged="PasswordBox_PasswordChanged" GotFocus="PasswordBox_GotFocus" LostFocus="PasswordBox_LostFocus"/>
-                    <TextBlock x:Name="PasswordPlaceholder" Text="Пароль" Foreground="{StaticResource SubtleTextColor}" FontSize="16" Padding="12" IsHitTestVisible="False" VerticalAlignment="Center"/>
-                </Grid>
-
-                <Button Content="Войти" Style="{StaticResource AccentButton}" Margin="0,0,0,20" Click="LoginButton_Click"/>
+            <StackPanel Margin="30">
+                <TextBlock Text="Вход в мессенджер" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+                <TextBlock Text="Логин" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
+                <TextBlock Text="Пароль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,25"/>
+                <Button Content="Войти" Style="{StaticResource PrimaryButton}" Margin="0,10,0,15" Click="LoginButton_Click"/>
                 <Button Content="Нет аккаунта? Зарегистрироваться" Style="{StaticResource TextButton}" HorizontalAlignment="Center" Click="RegisterButton_Click"/>
             </StackPanel>
         </Border>

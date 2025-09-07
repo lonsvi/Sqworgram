@@ -1,394 +1,239 @@
 ﻿<Page x:Class="_1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО.RegisterPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Width="1000" Height="600"
-      Title="RegisterPage">
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d"
+      Title="RegisterPage" d:DesignHeight="600" d:DesignWidth="1000">
 
-    <Grid>
-        <!-- Овальная плашка с текстом -->
-        <Border CornerRadius="20"
-                Background="#FF444444"
-                Padding="15,8"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Margin="0,18,0,0"
-                Opacity="0.9">
+    <Page.Resources>
+        <!-- Цветовая палитра -->
+        <Color x:Key="AccentColorValue">#FF007AFF</Color>
+        <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
+        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
+        <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
+        <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
+        <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
+        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
+
+        <!-- Анимации -->
+        <Storyboard x:Key="ButtonHoverOn">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.03" Duration="0:0:0.1"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.03" Duration="0:0:0.1"/>
+        </Storyboard>
+        <Storyboard x:Key="ButtonHoverOff">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/>
+        </Storyboard>
+        <Storyboard x:Key="ControlFocusOn">
+            <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.4" Duration="0:0:0.2"/>
+        </Storyboard>
+        <Storyboard x:Key="ControlFocusOff">
+            <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0" Duration="0:0:0.2"/>
+        </Storyboard>
+
+        <!-- НОВОЕ: Анимации для "стеклянных капель" -->
+        <Storyboard x:Key="BlobAnimation1" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.2" Duration="0:0:25"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.2" Duration="0:0:25"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="90" Duration="0:0:30"/>
+        </Storyboard>
+        <Storyboard x:Key="BlobAnimation2" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1.2" To="1" Duration="0:0:35"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1.2" To="1" Duration="0:0:35"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="-70" Duration="0:0:40"/>
+        </Storyboard>
+
+        <!-- Стили для полей ввода -->
+        <Style x:Key="ModernTextBoxBase" TargetType="Control">
+            <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Control">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <Border.Effect>
+                                <DropShadowEffect x:Name="shadow" ShadowDepth="0" Color="{StaticResource AccentColorValue}" BlurRadius="10" Opacity="0"/>
+                            </Border.Effect>
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ControlFocusOn}"/>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ControlFocusOff}"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernTextBox" TargetType="TextBox" BasedOn="{StaticResource ModernTextBoxBase}">
+            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+        </Style>
+        <Style x:Key="ModernPasswordBox" TargetType="PasswordBox" BasedOn="{StaticResource ModernTextBoxBase}">
+            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+        </Style>
+
+        <!-- Стили для кнопок -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" CenterX="125" CenterY="22.5"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.9"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOn}"/>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOff}"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TextButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock x:Name="textBlock" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="TextDecorations" Value="Underline"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{StaticResource PrimaryBackgroundColor}" ClipToBounds="True">
+        <!-- НОВОЕ: Контейнер для анимированных "капель" -->
+        <Grid>
+            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#4A00E0" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <BlurEffect Radius="150"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterX="200" CenterY="200"/>
+                        <RotateTransform CenterX="200" CenterY="200"/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation1}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+
+            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#8E2DE2" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <BlurEffect Radius="200"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterX="250" CenterY="250"/>
+                        <RotateTransform CenterX="250" CenterY="250"/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation2}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+        </Grid>
+
+        <Border x:Name="RegisterPanel" Background="#992B2B2B" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Opacity" Value="0"/>
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4"/>
+                                    <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,30,0,-30" To="0" Duration="0:0:0.4">
+                                        <ThicknessAnimation.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </ThicknessAnimation.EasingFunction>
+                                    </ThicknessAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
             <Border.Effect>
-                <DropShadowEffect Color="Black" ShadowDepth="5" BlurRadius="10" Opacity="0.5"/>
-            </Border.Effect>
-            <TextBlock Text="Как видим, вы тут впервые?"
-                       Foreground="White"
-                       FontSize="16"
-                       FontWeight="SemiBold"
-                       FontFamily="Segoe UI"
-                       TextAlignment="Center"/>
-        </Border>
-
-        <!-- Скруглённая панель для формы регистрации -->
-        <Border CornerRadius="30"
-                Width="450" Height="480"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Opacity="0.98">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Color="#FF2A2A2A" Offset="0.0"/>
-                    <GradientStop Color="#FF1E1E1E" Offset="1.0"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            <Border.Effect>
-                <DropShadowEffect Color="Black" ShadowDepth="10" BlurRadius="20" Opacity="0.6"/>
+                <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.4" BlurRadius="30"/>
             </Border.Effect>
 
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30">
-                <!-- Заголовок «Регистрация» -->
-                <TextBlock Text="Регистрация"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="White"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,30"
-                           FontFamily="Segoe UI"/>
-
-                <!-- Поле «Логин» с placeholder и анимацией -->
-                <Border CornerRadius="10" Background="#FF333333" Padding="10" Margin="0,0,0,15">
-                    <Grid>
-                        <TextBox x:Name="LoginTextBox"
-                                 Width="300" Height="40"
-                                 Background="Transparent"
-                                 Foreground="White"
-                                 CaretBrush="White"
-                                 Padding="5"
-                                 FontSize="14"
-                                 BorderThickness="0"
-                                 VerticalContentAlignment="Center"
-                                 FontFamily="Segoe UI">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="TextBox">
-                                                <Border Background="{TemplateBinding Background}"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                                    <ScrollViewer x:Name="PART_ContentHost"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                        <!-- Placeholder для логина с анимацией -->
-                        <TextBlock x:Name="LoginPlaceholder"
-                                   Text="Логин"
-                                   Foreground="Gray"
-                                   FontSize="14"
-                                   FontFamily="Segoe UI"
-                                   VerticalAlignment="Center"
-                                   Margin="10,0,0,0"
-                                   IsHitTestVisible="False">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                    <Setter Property="Opacity" Value="1"/>
-                                    <Style.Triggers>
-                                        <!-- Показываем placeholder, если поле пустое и не в фокусе -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Text, ElementName=LoginTextBox}" Value=""/>
-                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=LoginTextBox}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                            <MultiDataTrigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="0" To="1" Duration="0:0:0.3"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </MultiDataTrigger.EnterActions>
-                                        </MultiDataTrigger>
-                                        <!-- Скрываем placeholder, если поле не пустое или в фокусе -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Text, ElementName=LoginTextBox}" Value=""/>
-                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=LoginTextBox}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <MultiDataTrigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="1" To="0" Duration="0:0:0.3"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </MultiDataTrigger.ExitActions>
-                                        </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding Text, ElementName=LoginTextBox}" Value="">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Text, ElementName=LoginTextBox}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                </Border>
-
-                <!-- Поле «Пароль» с placeholder и анимацией -->
-                <Border CornerRadius="10" Background="#FF333333" Padding="10" Margin="0,0,0,15">
-                    <Grid>
-                        <PasswordBox x:Name="PasswordBox"
-                                     Width="300" Height="40"
-                                     Background="Transparent"
-                                     Foreground="White"
-                                     CaretBrush="White"
-                                     Padding="5"
-                                     FontSize="14"
-                                     BorderThickness="0"
-                                     VerticalContentAlignment="Center"
-                                     FontFamily="Segoe UI"
-                                     PasswordChar="•">
-                            <PasswordBox.Style>
-                                <Style TargetType="PasswordBox">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="PasswordBox">
-                                                <Border Background="{TemplateBinding Background}"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                                    <ScrollViewer x:Name="PART_ContentHost"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </PasswordBox.Style>
-                        </PasswordBox>
-                        <!-- Placeholder для пароля с анимацией -->
-                        <TextBlock x:Name="PasswordPlaceholder"
-                                   Text="Пароль"
-                                   Foreground="Gray"
-                                   FontSize="14"
-                                   FontFamily="Segoe UI"
-                                   VerticalAlignment="Center"
-                                   Margin="10,0,0,0"
-                                   IsHitTestVisible="False">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                    <Setter Property="Opacity" Value="1"/>
-                                    <Style.Triggers>
-                                        <!-- Показываем placeholder, если поле пустое и не в фокусе -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Password, ElementName=PasswordBox}" Value=""/>
-                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=PasswordBox}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                            <MultiDataTrigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="0" To="1" Duration="0:0:0.3"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </MultiDataTrigger.EnterActions>
-                                        </MultiDataTrigger>
-                                        <!-- Скрываем placeholder, если поле не пустое или в фокусе -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Password, ElementName=PasswordBox}" Value=""/>
-                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=PasswordBox}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <MultiDataTrigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="1" To="0" Duration="0:0:0.3"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </MultiDataTrigger.ExitActions>
-                                        </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding Password, ElementName=PasswordBox}" Value="">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Password, ElementName=PasswordBox}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                </Border>
-
-                <!-- Поле «Подтверждение пароля» с placeholder и анимацией -->
-                <Border CornerRadius="10" Background="#FF333333" Padding="10" Margin="0,0,0,25">
-                    <Grid>
-                        <PasswordBox x:Name="ConfirmPasswordBox"
-                                     Width="300" Height="40"
-                                     Background="Transparent"
-                                     Foreground="White"
-                                     CaretBrush="White"
-                                     Padding="5"
-                                     FontSize="14"
-                                     BorderThickness="0"
-                                     VerticalContentAlignment="Center"
-                                     FontFamily="Segoe UI"
-                                     PasswordChar="•">
-                            <PasswordBox.Style>
-                                <Style TargetType="PasswordBox">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="PasswordBox">
-                                                <Border Background="{TemplateBinding Background}"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                                    <ScrollViewer x:Name="PART_ContentHost"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </PasswordBox.Style>
-                        </PasswordBox>
-                        <!-- Placeholder для подтверждения пароля с анимацией -->
-                        <TextBlock x:Name="ConfirmPasswordPlaceholder"
-                                   Text="Повтор пароля"
-                                   Foreground="Gray"
-                                   FontSize="14"
-                                   FontFamily="Segoe UI"
-                                   VerticalAlignment="Center"
-                                   Margin="10,0,0,0"
-                                   IsHitTestVisible="False">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                    <Setter Property="Opacity" Value="1"/>
-                                    <Style.Triggers>
-                                        <!-- Показываем placeholder, если поле пустое и не в фокусе -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Password, ElementName=ConfirmPasswordBox}" Value=""/>
-                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=ConfirmPasswordBox}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                            <MultiDataTrigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="0" To="1" Duration="0:0:0.3"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </MultiDataTrigger.EnterActions>
-                                        </MultiDataTrigger>
-                                        <!-- Скрываем placeholder, если поле не пустое или в фокусе -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Password, ElementName=ConfirmPasswordBox}" Value=""/>
-                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=ConfirmPasswordBox}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <MultiDataTrigger.ExitActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="1" To="0" Duration="0:0:0.3"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </MultiDataTrigger.ExitActions>
-                                        </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding Password, ElementName=ConfirmPasswordBox}" Value="">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Password, ElementName=ConfirmPasswordBox}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                </Border>
-
-                <!-- Кнопка «Зарегистрироваться» -->
-                <Button Content="Зарегистрироваться"
-                        Width="250" Height="45"
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Cursor="Hand"
-                        BorderThickness="0"
-                        Margin="0,0,0,15"
-                        FontFamily="Segoe UI"
-                        Click="RegisterButton_Click">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="#FF555555"/>
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="10"
-                                                Padding="10">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#FF666666"/>
-                                            </Trigger>
-                                            <Trigger Property="IsPressed" Value="True">
-                                                <Setter Property="Background" Value="#FF777777"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Style>
-                </Button>
-
-                <!-- Кнопка «Назад» -->
-                <Button Content="Назад"
-                        Width="250" Height="45"
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Cursor="Hand"
-                        BorderThickness="0"
-                        FontFamily="Segoe UI"
-                        Click="BackButton_Click">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="#FF444444"/>
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="10"
-                                                Padding="10">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#FF555555"/>
-                                            </Trigger>
-                                            <Trigger Property="IsPressed" Value="True">
-                                                <Setter Property="Background" Value="#FF666666"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Style>
-                </Button>
+            <StackPanel Margin="30">
+                <TextBlock Text="Создание аккаунта" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+                <TextBlock Text="Логин" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
+                <TextBlock Text="Пароль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,15"/>
+                <TextBlock Text="Повторите пароль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <PasswordBox x:Name="ConfirmPasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,25"/>
+                <Button Content="Зарегистрироваться" Style="{StaticResource PrimaryButton}" Margin="0,10,0,15" Click="RegisterButton_Click"/>
+                <Button Content="Уже есть аккаунт? Войти" Style="{StaticResource TextButton}" HorizontalAlignment="Center" Click="BackButton_Click"/>
             </StackPanel>
         </Border>
     </Grid>
 </Page>
+

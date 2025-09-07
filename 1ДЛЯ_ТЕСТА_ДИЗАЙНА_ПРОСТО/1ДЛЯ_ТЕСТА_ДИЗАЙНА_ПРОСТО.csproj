@@ -422,6 +422,7 @@
   <ItemGroup>
     <Resource Include="image %281%29.jpg" />
     <Resource Include="image %282%29.jpg" />
+    <Resource Include="image ico.png" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
