@@ -8,8 +8,13 @@
 
     <Page.Resources>
         <!-- Цветовая палитра -->
-        <Color x:Key="AccentColorValue">#FF007AFF</Color>
-        <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
+        <Color x:Key="AccentColorValue">#7E2DE2</Color>
+
+        <LinearGradientBrush x:Key="AccentColor" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="{StaticResource AccentColorValue}" Offset="0.0" />
+            <GradientStop Color="#321061" Offset="0.5" />
+            <GradientStop Color="{StaticResource AccentColorValue}" Offset="1.0" />
+        </LinearGradientBrush>
         <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
         <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
         <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
@@ -33,7 +38,6 @@
             <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0" Duration="0:0:0.2"/>
         </Storyboard>
 
-        <!-- НОВОЕ: Анимации для "стеклянных капель" -->
         <Storyboard x:Key="BlobAnimation1" RepeatBehavior="Forever" AutoReverse="True">
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.2" Duration="0:0:25"/>
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.2" Duration="0:0:25"/>
@@ -150,9 +154,9 @@
     </Page.Resources>
 
     <Grid Background="{StaticResource PrimaryBackgroundColor}" ClipToBounds="True">
-        <!-- НОВОЕ: Контейнер для анимированных "капель" -->
+        <!-- Контейнер для анимированных "капель" -->
         <Grid>
-            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0">
+            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.8" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0">
                 <Border.Background>
                     <RadialGradientBrush>
                         <GradientStop Color="#4A00E0" Offset="0"/>
@@ -175,7 +179,7 @@
                 </Border.Triggers>
             </Border>
 
-            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150">
+            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150">
                 <Border.Background>
                     <RadialGradientBrush>
                         <GradientStop Color="#8E2DE2" Offset="0"/>
@@ -199,7 +203,8 @@
             </Border>
         </Grid>
 
-        <Border x:Name="LoginPanel" Background="#992B2B2B" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
+        <!-- ИЗМЕНЕНИЕ: Усилен эффект Glassmorphism с сохранением темного стиля -->
+        <Border x:Name="LoginPanel" Background="#992B2B2B" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Opacity" Value="0"/>
@@ -225,9 +230,9 @@
 
             <StackPanel Margin="30">
                 <TextBlock Text="Вход в мессенджер" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
-                <TextBlock Text="Логин" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Логин" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
-                <TextBlock Text="Пароль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Пароль" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,25"/>
                 <Button Content="Войти" Style="{StaticResource PrimaryButton}" Margin="0,10,0,15" Click="LoginButton_Click"/>
                 <Button Content="Нет аккаунта? Зарегистрироваться" Style="{StaticResource TextButton}" HorizontalAlignment="Center" Click="RegisterButton_Click"/>

@@ -33,7 +33,6 @@
             <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0" Duration="0:0:0.2"/>
         </Storyboard>
 
-        <!-- НОВОЕ: Анимации для "стеклянных капель" -->
         <Storyboard x:Key="BlobAnimation1" RepeatBehavior="Forever" AutoReverse="True">
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.2" Duration="0:0:25"/>
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.2" Duration="0:0:25"/>
@@ -146,12 +145,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Page.Resources>
 
     <Grid Background="{StaticResource PrimaryBackgroundColor}" ClipToBounds="True">
-        <!-- НОВОЕ: Контейнер для анимированных "капель" -->
+        <!-- Контейнер для анимированных "капель" -->
         <Grid>
-            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0">
+            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.8" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0">
                 <Border.Background>
                     <RadialGradientBrush>
                         <GradientStop Color="#4A00E0" Offset="0"/>
@@ -174,7 +174,7 @@
                 </Border.Triggers>
             </Border>
 
-            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150">
+            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150">
                 <Border.Background>
                     <RadialGradientBrush>
                         <GradientStop Color="#8E2DE2" Offset="0"/>
@@ -198,7 +198,8 @@
             </Border>
         </Grid>
 
-        <Border x:Name="RegisterPanel" Background="#992B2B2B" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
+        <!-- ИЗМЕНЕНИЕ: Усилен эффект Glassmorphism с сохранением темного стиля -->
+        <Border x:Name="RegisterPanel" Background="#992B2B2B" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Opacity" Value="0"/>
@@ -224,11 +225,11 @@
 
             <StackPanel Margin="30">
                 <TextBlock Text="Создание аккаунта" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
-                <TextBlock Text="Логин" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Логин" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
-                <TextBlock Text="Пароль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Пароль" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,15"/>
-                <TextBlock Text="Повторите пароль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Повторите пароль" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <PasswordBox x:Name="ConfirmPasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,25"/>
                 <Button Content="Зарегистрироваться" Style="{StaticResource PrimaryButton}" Margin="0,10,0,15" Click="RegisterButton_Click"/>
                 <Button Content="Уже есть аккаунт? Войти" Style="{StaticResource TextButton}" HorizontalAlignment="Center" Click="BackButton_Click"/>

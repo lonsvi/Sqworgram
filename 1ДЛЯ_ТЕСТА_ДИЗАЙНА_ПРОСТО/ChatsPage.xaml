@@ -14,7 +14,7 @@
         <local:TextMessageToVisibilityConverter x:Key="TextMessageToVisibilityConverter"/>
 
         <!-- Цветовая палитра -->
-        <Color x:Key="AccentColorValue">#FF007AFF</Color>
+        <Color x:Key="AccentColorValue">#FF6A359C</Color>
         <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
         <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
         <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
@@ -23,7 +23,7 @@
         <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
         <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
         <SolidColorBrush x:Key="AccentTextColor" Color="{StaticResource AccentColorValue}"/>
-        <SolidColorBrush x:Key="TimestampTextColor" Color="#AEEEEE"/>
+        <SolidColorBrush x:Key="TimestampTextColor" Color="#D1D1D1"/>
 
         <!-- Анимации -->
         <Storyboard x:Key="ChatPanelSlideIn">
@@ -35,12 +35,23 @@
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.2"/>
         </Storyboard>
 
-        <!-- НОВОЕ: Анимация мерцания для загрузки изображений -->
         <Storyboard x:Key="ShimmerAnimation">
             <DoubleAnimation
                 Storyboard.TargetProperty="(Border.Background).(Brush.Transform).(TranslateTransform.X)"
                 From="-400" To="400" Duration="0:0:1.5" RepeatBehavior="Forever" />
         </Storyboard>
+        
+        <Storyboard x:Key="BlobAnimation1" x:Shared="False" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.2" Duration="0:0:25"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.2" Duration="0:0:25"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="90" Duration="0:0:30"/>
+        </Storyboard>
+        <Storyboard x:Key="BlobAnimation2" x:Shared="False" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1.2" To="1" Duration="0:0:35"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1.2" To="1" Duration="0:0:35"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="-70" Duration="0:0:40"/>
+        </Storyboard>
+
 
         <!-- Стили контролов -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
@@ -127,7 +138,38 @@
                                 <Setter TargetName="border" Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#33FFFFFF"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="1"/>
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#996A359C" Offset="0"/>
+                                            <GradientStop Color="#99421061" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="ScrollBarThumbStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border CornerRadius="4" Background="#668A9BAB" x:Name="thumbBorder" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#AA8A9BAB" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#DD8A9BAB" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -135,262 +177,387 @@
             </Setter>
         </Style>
 
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="8"/>
+                    <Setter Property="Height" Value="Auto" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid>
+                                    <Track Name="PART_Track" IsDirectionReversed="true">
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumbStyle}" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton" Focusable="false" Background="{TemplateBinding Background}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="Transparent" CornerRadius="5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="20" />
+                                                </Grid.ColumnDefinitions>
+                                                <Path Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" TextBlock.Foreground="{TemplateBinding Foreground}" />
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="#DD1C1C1C" CornerRadius="5" BorderBrush="#33FFFFFF" BorderThickness="1">
+                                        <ScrollViewer Margin="1">
+                                            <StackPanel IsItemsHost="True" />
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="border" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="3">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource HoverBackgroundColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
     </Page.Resources>
 
-    <Grid Background="{StaticResource PrimaryBackgroundColor}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="320"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Grid Background="{StaticResource PrimaryBackgroundColor}" ClipToBounds="True">
+        <!-- Анимированный фон Glassmorphism -->
+        <Grid x:Name="BackgroundAnimationGrid">
+             <Border x:Name="Blob1" Width="600" Height="600" CornerRadius="300" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-250,-200,0,0">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#4A00E0" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <BlurEffect Radius="200"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterX="300" CenterY="300"/>
+                        <RotateTransform CenterX="300" CenterY="300"/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+                 <Border.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation1}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+            
+            <Border x:Name="Blob2" Width="700" Height="700" CornerRadius="350" Opacity="0.6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-300,-250">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#8E2DE2" Offset="0"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <BlurEffect Radius="250"/>
+                </Border.Effect>
+                <Border.RenderTransform>
+                     <TransformGroup>
+                        <ScaleTransform CenterX="350" CenterY="350"/>
+                        <RotateTransform CenterX="350" CenterY="350"/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+                 <Border.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation2}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+            </Border>
+        </Grid>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Левая панель -->
-        <Border Grid.Column="0" Background="{StaticResource SecondaryBackgroundColor}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Margin="10">
-                    <TextBox x:Name="SearchTextBox" Style="{StaticResource ModernTextBox}" Text="Поиск" Foreground="{StaticResource SecondaryTextColor}" 
-                             GotFocus="SearchTextBox_GotFocus" LostFocus="SearchTextBox_LostFocus" TextChanged="SearchTextBox_TextChanged"/>
-                </StackPanel>
+            <!-- Левая панель -->
+            <Border x:Name="LeftPanelBorder" Grid.Column="0" Background="#991C1C1C" BorderBrush="#22FFFFFF" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Margin="10">
+                        <TextBox x:Name="SearchTextBox" Style="{StaticResource ModernTextBox}" Text="Поиск" Foreground="{StaticResource SecondaryTextColor}" 
+                                 GotFocus="SearchTextBox_GotFocus" LostFocus="SearchTextBox_LostFocus" TextChanged="SearchTextBox_TextChanged"/>
+                    </StackPanel>
 
-                <ListBox x:Name="ChatListBox" Grid.Row="1" Background="Transparent" BorderThickness="0"
-                         ItemContainerStyle="{StaticResource ChatListItemStyle}"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         SelectionChanged="ChatListBox_SelectionChanged"
-                         MouseRightButtonUp="ChatListBox_MouseRightButtonUp">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="0" Width="45" Height="45">
-                                    <Ellipse Fill="{StaticResource HoverBackgroundColor}"/>
-                                    <Image Source="{Binding AvatarUrl, Converter={StaticResource AvatarUrlConverter}}" Stretch="UniformToFill">
-                                        <Image.Clip>
-                                            <EllipseGeometry RadiusX="22.5" RadiusY="22.5" Center="22.5,22.5"/>
-                                        </Image.Clip>
-                                    </Image>
-                                    <Ellipse Width="12" Height="12" Fill="LimeGreen" HorizontalAlignment="Right" VerticalAlignment="Bottom" Stroke="{StaticResource SecondaryBackgroundColor}" StrokeThickness="2"
-                                             Visibility="{Binding IsOnline, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <ListBox x:Name="ChatListBox" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                             ItemContainerStyle="{StaticResource ChatListItemStyle}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             SelectionChanged="ChatListBox_SelectionChanged"
+                             MouseRightButtonUp="ChatListBox_MouseRightButtonUp">
+                        <!-- ИСПРАВЛЕНИЕ: Возвращен шаблон для элементов списка чатов -->
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0" Width="45" Height="45">
+                                        <Ellipse Fill="{StaticResource HoverBackgroundColor}"/>
+                                        <Image Source="{Binding AvatarUrl, Converter={StaticResource AvatarUrlConverter}}" Stretch="UniformToFill">
+                                            <Image.Clip>
+                                                <EllipseGeometry RadiusX="22.5" RadiusY="22.5" Center="22.5,22.5"/>
+                                            </Image.Clip>
+                                        </Image>
+                                        <Ellipse Width="12" Height="12" Fill="LimeGreen" HorizontalAlignment="Right" VerticalAlignment="Bottom" Stroke="{StaticResource SecondaryBackgroundColor}" StrokeThickness="2"
+                                                 Visibility="{Binding IsOnline, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                    </Grid>
+                                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Login}" Foreground="{StaticResource PrimaryTextColor}" FontSize="15" FontWeight="SemiBold"/>
+                                        <TextBlock FontSize="12" Foreground="{StaticResource SecondaryTextColor}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="Оффлайн"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsTyping}" Value="True">
+                                                            <Setter Property="Text" Value="печатает..."/>
+                                                            <Setter Property="Foreground" Value="{StaticResource AccentTextColor}"/>
+                                                            <Setter Property="FontStyle" Value="Italic"/>
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsTyping}" Value="False"/>
+                                                                <Condition Binding="{Binding IsOnline}" Value="True"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Text" Value="В сети"/>
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
                                 </Grid>
-                                <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Login}" Foreground="{StaticResource PrimaryTextColor}" FontSize="15" FontWeight="SemiBold"/>
-                                    <TextBlock FontSize="12" Foreground="{StaticResource SecondaryTextColor}">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="Оффлайн"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsTyping}" Value="True">
-                                                        <Setter Property="Text" Value="печатает..."/>
-                                                        <Setter Property="Foreground" Value="{StaticResource AccentTextColor}"/>
-                                                        <Setter Property="FontStyle" Value="Italic"/>
-                                                    </DataTrigger>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding IsTyping}" Value="False"/>
-                                                            <Condition Binding="{Binding IsOnline}" Value="True"/>
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="Text" Value="В сети"/>
-                                                    </MultiDataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
-                    <Button x:Name="SettingsButton" Style="{StaticResource IconButton}" Click="SettingsButton_Click">
-                        <Path Data="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.23C14.38,2,14.17,1.84,13.92,1.84h-3.84 c-0.25,0-0.46,0.16-0.49,0.39l-0.34,2.55c-0.59,0.24-1.13,0.57-1.62,0.94l-2.39-0.96c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.68,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.34,2.55 c0.02,0.24,0.23,0.39,0.49,0.39h3.84c0.25,0,0.46-0.16,0.49-0.39l0.34-2.55c0.59-0.24,1.13-0.57,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="22"/>
-                    </Button>
-                    <Button x:Name="FavoriteButton" Style="{StaticResource IconButton}" Click="ToggleFavoriteMode_Click">
-                        <Path Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="22"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- Правая панель (Чат) -->
-        <Grid Grid.Column="1">
-            <Border x:Name="ChatPlaceholder" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Выберите, кому хотели бы написать" Foreground="{StaticResource SecondaryTextColor}" FontSize="16"/>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
+                        <Button x:Name="SettingsButton" Style="{StaticResource IconButton}" Click="SettingsButton_Click">
+                            <Path Data="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.23C14.38,2,14.17,1.84,13.92,1.84h-3.84 c-0.25,0-0.46,0.16-0.49,0.39l-0.34,2.55c-0.59,0.24-1.13,0.57-1.62,0.94l-2.39-0.96c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.68,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.34,2.55 c0.02,0.24,0.23,0.39,0.49,0.39h3.84c0.25,0,0.46-0.16,0.49-0.39l0.34-2.55c0.59-0.24,1.13-0.57,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="22"/>
+                        </Button>
+                        <Button x:Name="FavoriteButton" Style="{StaticResource IconButton}" Click="ToggleFavoriteMode_Click">
+                            <Path Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="22"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
             </Border>
 
-            <Grid x:Name="ChatArea" Visibility="Collapsed">
-                <Grid.Style>
-                    <Style TargetType="Grid">
-                        <Style.Triggers>
-                            <Trigger Property="Visibility" Value="Visible">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource ChatPanelSlideIn}"/>
-                                </Trigger.EnterActions>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Grid.Style>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- Правая панель (Чат) -->
+            <Grid Grid.Column="1">
+                <Border x:Name="ChatPlaceholder" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Выберите, кому хотели бы написать" Foreground="{StaticResource SecondaryTextColor}" FontSize="16"/>
+                </Border>
 
-                <Border Grid.Row="0" Background="{StaticResource SecondaryBackgroundColor}" CornerRadius="10" Padding="15" Margin="10,10,10,0">
-                    <StackPanel>
+                <Grid x:Name="ChatArea" Visibility="Collapsed">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <Trigger Property="Visibility" Value="Visible">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource ChatPanelSlideIn}"/>
+                                    </Trigger.EnterActions>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border x:Name="ChatHeaderBorder" Grid.Row="0" Background="#991C1C1C" BorderBrush="#22FFFFFF" BorderThickness="1" CornerRadius="10" Padding="15" Margin="10,10,10,0">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" x:Name="ChatHeader" Foreground="{StaticResource PrimaryTextColor}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1" x:Name="TranslationDirectionComboBox" Style="{StaticResource ModernComboBoxStyle}" Width="120">
+                                    <ComboBoxItem Content="EN → RU" IsSelected="True"/>
+                                    <ComboBoxItem Content="RU → EN"/>
+                                </ComboBox>
+                            </Grid>
+                            <TextBlock x:Name="TypingIndicator" Foreground="{StaticResource AccentTextColor}" FontStyle="Italic" FontSize="12" Margin="0,5,0,0" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <ScrollViewer x:Name="ChatScrollViewer" Grid.Row="1" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="MessagesPanel" Margin="10,0">
+                           <!-- ИСПРАВЛЕНИЕ: Возвращен полный и правильный шаблон для сообщений -->
+                           <ItemsControl.ItemTemplate>
+                               <DataTemplate DataType="{x:Type local:MessageViewModel}">
+                                   <Grid>
+                                       <Grid.Triggers>
+                                           <EventTrigger RoutedEvent="Loaded">
+                                               <BeginStoryboard>
+                                                   <Storyboard>
+                                                       <ThicknessAnimation Storyboard.TargetName="MessageBubble" Storyboard.TargetProperty="Margin" From="0,20,0,0" To="5" Duration="0:0:0.4">
+                                                           <ThicknessAnimation.EasingFunction>
+                                                               <CubicEase EasingMode="EaseOut"/>
+                                                           </ThicknessAnimation.EasingFunction>
+                                                       </ThicknessAnimation>
+                                                       <DoubleAnimation Storyboard.TargetName="MessageBubble" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
+                                                   </Storyboard>
+                                               </BeginStoryboard>
+                                           </EventTrigger>
+                                       </Grid.Triggers>
+                                       <Border x:Name="MessageBubble" Padding="12" MaxWidth="400" Opacity="0">
+                                           <StackPanel>
+                                               <Border CornerRadius="8" Margin="0,0,0,5" ClipToBounds="True">
+                                                   <Border.Background>
+                                                       <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                           <GradientStop Color="#FF333333" Offset="0.0" />
+                                                           <GradientStop Color="#FF4A4A4A" Offset="0.5" />
+                                                           <GradientStop Color="#FF333333" Offset="1.0" />
+                                                           <Brush.Transform>
+                                                               <TranslateTransform X="-400" Y="0" />
+                                                           </Brush.Transform>
+                                                       </LinearGradientBrush>
+                                                   </Border.Background>
+                                                   <Border.Triggers>
+                                                       <EventTrigger RoutedEvent="Loaded">
+                                                           <BeginStoryboard Storyboard="{StaticResource ShimmerAnimation}"/>
+                                                       </EventTrigger>
+                                                   </Border.Triggers>
+                                                   <Image Source="{Binding AttachmentUrl, Converter={StaticResource AvatarUrlConverter}}" MaxWidth="250" MaxHeight="250" Cursor="Hand" MouseLeftButtonDown="Image_MouseLeftButtonDown" Stretch="UniformToFill">
+                                                       <Image.Style>
+                                                           <Style TargetType="Image">
+                                                               <Setter Property="Visibility" Value="Visible"/>
+                                                               <Style.Triggers>
+                                                                   <DataTrigger Binding="{Binding AttachmentUrl, FallbackValue='', TargetNullValue=''}" Value="">
+                                                                       <Setter Property="Visibility" Value="Collapsed"/>
+                                                                   </DataTrigger>
+                                                               </Style.Triggers>
+                                                           </Style>
+                                                       </Image.Style>
+                                                       <Image.Triggers>
+                                                           <EventTrigger RoutedEvent="Loaded">
+                                                               <BeginStoryboard>
+                                                                   <Storyboard>
+                                                                       <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
+                                                                   </Storyboard>
+                                                               </BeginStoryboard>
+                                                           </EventTrigger>
+                                                       </Image.Triggers>
+                                                   </Image>
+                                               </Border>
+                                               <TextBlock Text="{Binding MessageText}" TextWrapping="Wrap" FontSize="14" Visibility="{Binding MessageText, Converter={StaticResource TextMessageToVisibilityConverter}}"/>
+                                               <Grid Margin="0,5,0,0">
+                                                   <Grid.ColumnDefinitions>
+                                                       <ColumnDefinition Width="*"/>
+                                                       <ColumnDefinition Width="Auto"/>
+                                                   </Grid.ColumnDefinitions>
+                                                   <Button Grid.Column="0" Content="Перевести" Style="{StaticResource TranslateButtonStyle}" HorizontalAlignment="Left" Click="TranslateButton_Click" Tag="{Binding}" Visibility="{Binding MessageText, Converter={StaticResource TextMessageToVisibilityConverter}}"/>
+                                                   <TextBlock x:Name="TimestampText" Grid.Column="1" Text="{Binding Timestamp, StringFormat='HH:mm'}" FontSize="10" HorizontalAlignment="Right"/>
+                                               </Grid>
+                                           </StackPanel>
+                                       </Border>
+                                   </Grid>
+                                   <DataTemplate.Triggers>
+                                       <DataTrigger Binding="{Binding IsSentByMe}" Value="False">
+                                           <Setter TargetName="MessageBubble" Property="HorizontalAlignment" Value="Left"/>
+                                           <Setter TargetName="MessageBubble" Property="Background" Value="#991C1C1C"/>
+                                           <Setter TargetName="MessageBubble" Property="BorderBrush" Value="#22FFFFFF"/>
+                                           <Setter TargetName="MessageBubble" Property="BorderThickness" Value="1"/>
+                                           <Setter TargetName="MessageBubble" Property="CornerRadius" Value="15,15,15,5"/>
+                                           <Setter TargetName="MessageBubble" Property="TextBlock.Foreground" Value="{StaticResource PrimaryTextColor}"/>
+                                           <Setter TargetName="TimestampText" Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
+                                       </DataTrigger>
+                                       <DataTrigger Binding="{Binding IsSentByMe}" Value="True">
+                                           <Setter TargetName="MessageBubble" Property="HorizontalAlignment" Value="Right"/>
+                                           <Setter TargetName="MessageBubble" Property="CornerRadius" Value="15,15,5,15"/>
+                                           <Setter TargetName="MessageBubble" Property="BorderBrush" Value="#33FFFFFF"/>
+                                           <Setter TargetName="MessageBubble" Property="BorderThickness" Value="1"/>
+                                           <Setter TargetName="MessageBubble" Property="Background">
+                                               <Setter.Value>
+                                                   <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                       <GradientStop Color="#808E2DE2" Offset="0"/>
+                                                       <GradientStop Color="#804A00E0" Offset="1"/>
+                                                   </LinearGradientBrush>
+                                               </Setter.Value>
+                                           </Setter>
+                                           <Setter TargetName="MessageBubble" Property="TextBlock.Foreground" Value="{StaticResource PrimaryTextColor}"/>
+                                           <Setter TargetName="TimestampText" Property="Foreground" Value="{StaticResource TimestampTextColor}"/>
+                                       </DataTrigger>
+                                   </DataTemplate.Triggers>
+                               </DataTemplate>
+                           </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <Border x:Name="MessageInputPanelBorder" Grid.Row="2" Background="#991C1C1C" BorderBrush="#22FFFFFF" BorderThickness="1" CornerRadius="22" Margin="10" Padding="5">
                         <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" x:Name="ChatHeader" Foreground="{StaticResource PrimaryTextColor}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <ComboBox Grid.Column="1" x:Name="TranslationDirectionComboBox" Style="{StaticResource ModernComboBoxStyle}" Width="120">
-                                <ComboBoxItem Content="EN → RU" IsSelected="True"/>
-                                <ComboBoxItem Content="RU → EN"/>
-                            </ComboBox>
+                            <Button x:Name="AttachFileButton" Grid.Column="0" Style="{StaticResource IconButton}" Click="AttachFileButton_Click">
+                                <Path Data="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
+                            </Button>
+                            <TextBox x:Name="MessageTextBox" Grid.Column="1" Style="{StaticResource ModernTextBox}" Margin="5,0"
+                                     TextChanged="MessageTextBox_TextChanged" KeyDown="MessageTextBox_KeyDown"/>
+                            <Button x:Name="SendMessageButton" Grid.Column="2" Style="{StaticResource IconButton}" Click="SendMessage_Click">
+                                <Path Data="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
+                            </Button>
                         </Grid>
-                        <TextBlock x:Name="TypingIndicator" Foreground="{StaticResource AccentTextColor}" FontStyle="Italic" FontSize="12" Margin="0,5,0,0" Visibility="Collapsed"/>
-                    </StackPanel>
-                </Border>
-
-                <ScrollViewer x:Name="ChatScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
-                    <ItemsControl x:Name="MessagesPanel" Margin="10,0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type local:MessageViewModel}">
-                                <Grid>
-                                    <!-- Анимация появления для каждого сообщения -->
-                                    <Grid.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <ThicknessAnimation Storyboard.TargetName="MessageBubble" Storyboard.TargetProperty="Margin" From="0,20,0,0" To="5" Duration="0:0:0.4">
-                                                        <ThicknessAnimation.EasingFunction>
-                                                            <CubicEase EasingMode="EaseOut"/>
-                                                        </ThicknessAnimation.EasingFunction>
-                                                    </ThicknessAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="MessageBubble" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Grid.Triggers>
-
-                                    <Border x:Name="MessageBubble" Padding="12" MaxWidth="400" Opacity="0">
-                                        <StackPanel>
-                                            <!-- ИЗМЕНЕНИЕ: Улучшенный блок для изображений с анимацией загрузки -->
-                                            <Border CornerRadius="8" Margin="0,0,0,5" ClipToBounds="True">
-                                                <!-- Этот Border будет иметь мерцающий фон-заглушку -->
-                                                <Border.Background>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                        <GradientStop Color="#FF333333" Offset="0.0" />
-                                                        <GradientStop Color="#FF4A4A4A" Offset="0.5" />
-                                                        <GradientStop Color="#FF333333" Offset="1.0" />
-                                                        <Brush.Transform>
-                                                            <TranslateTransform X="-400" Y="0" />
-                                                        </Brush.Transform>
-                                                    </LinearGradientBrush>
-                                                </Border.Background>
-
-                                                <!-- Триггер для запуска анимации мерцания -->
-                                                <Border.Triggers>
-                                                    <EventTrigger RoutedEvent="Loaded">
-                                                        <BeginStoryboard Storyboard="{StaticResource ShimmerAnimation}"/>
-                                                    </EventTrigger>
-                                                </Border.Triggers>
-
-                                                <Image Source="{Binding AttachmentUrl, Converter={StaticResource AvatarUrlConverter}}" 
-                                                       MaxWidth="250" MaxHeight="250" Cursor="Hand" 
-                                                       MouseLeftButtonDown="Image_MouseLeftButtonDown"
-                                                       Stretch="UniformToFill">
-                                                    <Image.Style>
-                                                        <Style TargetType="Image">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding AttachmentUrl, FallbackValue='', TargetNullValue=''}" Value="">
-                                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Image.Style>
-                                                    <!-- Плавное появление самого изображения после загрузки -->
-                                                    <Image.Triggers>
-                                                        <EventTrigger RoutedEvent="Loaded">
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </EventTrigger>
-                                                    </Image.Triggers>
-                                                </Image>
-                                            </Border>
-
-                                            <TextBlock Text="{Binding MessageText}" TextWrapping="Wrap" FontSize="14" Visibility="{Binding MessageText, Converter={StaticResource TextMessageToVisibilityConverter}}"/>
-
-                                            <Grid Margin="0,5,0,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Button Grid.Column="0" Content="Перевести" Style="{StaticResource TranslateButtonStyle}" HorizontalAlignment="Left"
-                                                        Click="TranslateButton_Click" Tag="{Binding}"
-                                                        Visibility="{Binding MessageText, Converter={StaticResource TextMessageToVisibilityConverter}}"/>
-                                                <TextBlock x:Name="TimestampText" Grid.Column="1" Text="{Binding Timestamp, StringFormat='HH:mm'}" FontSize="10" HorizontalAlignment="Right"/>
-                                            </Grid>
-                                        </StackPanel>
-                                    </Border>
-                                </Grid>
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding IsSentByMe}" Value="False">
-                                        <Setter TargetName="MessageBubble" Property="HorizontalAlignment" Value="Left"/>
-                                        <Setter TargetName="MessageBubble" Property="Background" Value="{StaticResource SecondaryBackgroundColor}"/>
-                                        <Setter TargetName="MessageBubble" Property="CornerRadius" Value="15,15,15,5"/>
-                                        <Setter TargetName="MessageBubble" Property="TextBlock.Foreground" Value="{StaticResource PrimaryTextColor}"/>
-                                        <Setter TargetName="TimestampText" Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsSentByMe}" Value="True">
-                                        <Setter TargetName="MessageBubble" Property="HorizontalAlignment" Value="Right"/>
-                                        <Setter TargetName="MessageBubble" Property="Background" Value="{StaticResource AccentColor}"/>
-                                        <Setter TargetName="MessageBubble" Property="CornerRadius" Value="15,15,5,15"/>
-                                        <Setter TargetName="MessageBubble" Property="TextBlock.Foreground" Value="{StaticResource PrimaryTextColor}"/>
-                                        <Setter TargetName="TimestampText" Property="Foreground" Value="{StaticResource TimestampTextColor}"/>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <!-- Панель ввода сообщения -->
-                <Border Grid.Row="2" Background="{StaticResource SecondaryBackgroundColor}" CornerRadius="22" Margin="10" Padding="5">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Button x:Name="AttachFileButton" Grid.Column="0" Style="{StaticResource IconButton}" Click="AttachFileButton_Click">
-                            <Path Data="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
-                        </Button>
-                        <TextBox x:Name="MessageTextBox" Grid.Column="1" Style="{StaticResource ModernTextBox}" Margin="5,0"
-                                 TextChanged="MessageTextBox_TextChanged" KeyDown="MessageTextBox_KeyDown"/>
-                        <Button x:Name="SendMessageButton" Grid.Column="2" Style="{StaticResource IconButton}" Click="SendMessage_Click">
-                            <Path Data="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
-                        </Button>
-                    </Grid>
-                </Border>
+                    </Border>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

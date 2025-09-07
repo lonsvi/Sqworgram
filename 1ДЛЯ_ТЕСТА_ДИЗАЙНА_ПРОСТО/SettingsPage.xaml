@@ -8,11 +8,13 @@
 
     <Page.Resources>
         <!-- Ресурсы скопированы со страницы чатов для единообразия -->
-        <Color x:Key="AccentColorValue">#FF007AFF</Color>
+        <Color x:Key="AccentColorValue">#FF6A359C</Color>
+        <Color x:Key="ControlBackgroundColorValue">#FF333333</Color>
+
         <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
         <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
         <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
-        <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
+        <SolidColorBrush x:Key="ControlBackgroundColor" Color="{StaticResource ControlBackgroundColorValue}"/>
         <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
         <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
         <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
@@ -60,7 +62,7 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Opacity" Value="0.9"/>
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
+                             <Trigger Property="IsPressed" Value="True">
                                 <Setter Property="Opacity" Value="0.7"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -72,7 +74,7 @@
         <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource BaseButton}">
             <Setter Property="Background" Value="{StaticResource AccentColor}"/>
         </Style>
-
+        
         <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource BaseButton}">
             <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
         </Style>
@@ -103,17 +105,105 @@
             </Setter>
         </Style>
 
+        <Style x:Key="ModernToggleSwitch" TargetType="ToggleButton">
+            <Setter Property="Width" Value="52"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="BackgroundBorder" CornerRadius="16" Background="{StaticResource ControlBackgroundColor}" BorderBrush="#44FFFFFF" BorderThickness="1">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource AccentColorValue}" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbTransform" Storyboard.TargetProperty="X" To="20" Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked">
+                                        <Storyboard>
+                                             <ColorAnimation Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource ControlBackgroundColorValue}" Duration="0:0:0.2"/>
+                                             <DoubleAnimation Storyboard.TargetName="ThumbTransform" Storyboard.TargetProperty="X" To="0" Duration="0:0:0.2">
+                                                 <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                             </DoubleAnimation>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Ellipse x:Name="Thumb" Fill="White" Width="24" Height="24" HorizontalAlignment="Left" Margin="3">
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform x:Name="ThumbTransform" />
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- НОВОЕ: Стили для кастомного скроллбара -->
+        <Style x:Key="ScrollBarThumbStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border CornerRadius="4" Background="#668A9BAB" x:Name="thumbBorder" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#AA8A9BAB" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#DD8A9BAB" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="8"/>
+                    <Setter Property="Height" Value="Auto" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid>
+                                    <Track Name="PART_Track" IsDirectionReversed="true">
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumbStyle}" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </Page.Resources>
 
     <Grid Background="{StaticResource PrimaryBackgroundColor}">
-        <!-- Кнопка "Назад" -->
         <Button x:Name="BackButton" Style="{StaticResource IconButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" Click="BackToChats_Click">
-            <Path Data="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
+             <Path Data="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
         </Button>
 
-        <!-- Центральная панель с анимацией -->
-        <Border x:Name="SettingsPanel" Background="{StaticResource SecondaryBackgroundColor}" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
-            <Border.Style>
+        <Border x:Name="SettingsPanel" Background="{StaticResource SecondaryBackgroundColor}" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="450" d:Opacity="1" Height="546">
+             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Opacity" Value="0"/>
                     <Style.Triggers>
@@ -136,32 +226,69 @@
                 <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.4" BlurRadius="30"/>
             </Border.Effect>
 
-            <StackPanel Margin="30">
-                <TextBlock Text="Настройки профиля" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25" />
-
-                <!-- Аватар -->
-                <Border Width="120" Height="120" CornerRadius="60" HorizontalAlignment="Center" Margin="0,0,0,20">
-                    <Border.Background>
-                        <SolidColorBrush Color="#FF444444"/>
-                    </Border.Background>
-                    <Image x:Name="AvatarImage" Stretch="UniformToFill">
-                        <Image.Clip>
-                            <EllipseGeometry RadiusX="60" RadiusY="60" Center="60,60"/>
-                        </Image.Clip>
-                    </Image>
-                </Border>
-
-                <!-- Логин пользователя -->
-                <TextBlock x:Name="UserLoginTextBlock" Foreground="{StaticResource SecondaryTextColor}" TextAlignment="Center" FontSize="16" Margin="0,0,0,20"/>
-
-                <!-- Поле для ввода URL -->
-                <TextBlock Text="URL аватара" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
-                <TextBox x:Name="AvatarUrlTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
-
-                <!-- Кнопки -->
-                <Button Content="Сохранить аватар" Style="{StaticResource PrimaryButton}" Margin="0,10,0,5" Click="SaveAvatarUrl_Click"/>
-                <Button Content="Выйти из аккаунта" Style="{StaticResource SecondaryButton}" Margin="0,5,0,0" Click="Logout_Click"/>
-            </StackPanel>
+            <!-- ИЗМЕНЕНИЕ: StackPanel обернут в ScrollViewer -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,15">
+                <StackPanel Margin="30,15">
+                    <TextBlock Text="Настройки" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+                    <TextBlock Text="Профиль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,10" Opacity="0.5"/>
+                    
+                    <Border CornerRadius="10" Background="{StaticResource ControlBackgroundColor}" Padding="15">
+                        <StackPanel>
+                             <Border Width="100" Height="100" CornerRadius="50" HorizontalAlignment="Center" Margin="0,0,0,15">
+                                <Border.Background>
+                                    <SolidColorBrush Color="#FF444444"/>
+                                </Border.Background>
+                                <Image x:Name="AvatarImage" Stretch="UniformToFill">
+                                    <Image.Clip>
+                                        <EllipseGeometry RadiusX="50" RadiusY="50" Center="50,50"/>
+                                    </Image.Clip>
+                                </Image>
+                            </Border>
+                            <TextBlock x:Name="UserLoginTextBlock" Foreground="{StaticResource PrimaryTextColor}" TextAlignment="Center" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,20"/>
+                            <TextBlock Text="URL аватара" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,0,0,5"/>
+                            <TextBox x:Name="AvatarUrlTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
+                            <Button Content="Сохранить аватар" Style="{StaticResource PrimaryButton}" Click="SaveAvatarUrl_Click"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <TextBlock Text="Производительность" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0.5"/>
+                    <Border CornerRadius="10" Background="{StaticResource ControlBackgroundColor}" Padding="15">
+                        <StackPanel>
+                            <!-- Настройка анимации -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Анимация фона" Foreground="{StaticResource PrimaryTextColor}"/>
+                                    <TextBlock Text="Плавная анимация на фоне" Foreground="{StaticResource SecondaryTextColor}" FontSize="12"/>
+                                </StackPanel>
+                                <ToggleButton x:Name="AnimationToggle" Grid.Column="1" Style="{StaticResource ModernToggleSwitch}" Checked="AnimationToggle_Changed" Unchecked="AnimationToggle_Changed"/>
+                            </Grid>
+                            
+                            <!-- Разделитель -->
+                            <Separator Margin="0,5" Background="#44FFFFFF"/>
+                            
+                            <!-- Настройка прозрачности -->
+                             <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Эффект 'стекла'" Foreground="{StaticResource PrimaryTextColor}"/>
+                                    <TextBlock Text="Полупрозрачные элементы интерфейса" Foreground="{StaticResource SecondaryTextColor}" FontSize="12"/>
+                                </StackPanel>
+                                 <ToggleButton x:Name="GlassToggle" Grid.Column="1" Style="{StaticResource ModernToggleSwitch}" Checked="GlassToggle_Changed" Unchecked="GlassToggle_Changed"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    
+                    <Button Content="Выйти из аккаунта" Style="{StaticResource SecondaryButton}" Margin="0,25,0,0" Click="Logout_Click"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
 </Page>
+
