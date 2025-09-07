@@ -35,6 +35,13 @@
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.2"/>
         </Storyboard>
 
+        <!-- НОВОЕ: Анимация мерцания для загрузки изображений -->
+        <Storyboard x:Key="ShimmerAnimation">
+            <DoubleAnimation
+                Storyboard.TargetProperty="(Border.Background).(Brush.Transform).(TranslateTransform.X)"
+                From="-400" To="400" Duration="0:0:1.5" RepeatBehavior="Forever" />
+        </Storyboard>
+
         <!-- Стили контролов -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
@@ -264,7 +271,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type local:MessageViewModel}">
                                 <Grid>
-                                    <!-- ИЗМЕНЕНИЕ: Добавлена анимация появления для каждого сообщения -->
+                                    <!-- Анимация появления для каждого сообщения -->
                                     <Grid.Triggers>
                                         <EventTrigger RoutedEvent="Loaded">
                                             <BeginStoryboard>
@@ -282,21 +289,53 @@
 
                                     <Border x:Name="MessageBubble" Padding="12" MaxWidth="400" Opacity="0">
                                         <StackPanel>
-                                            <Image Source="{Binding AttachmentUrl}" MaxWidth="250" MaxHeight="250" Margin="0,0,0,5" Cursor="Hand" MouseLeftButtonDown="Image_MouseLeftButtonDown">
-                                                <Image.Style>
-                                                    <Style TargetType="Image">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding AttachmentUrl}" Value="{x:Null}">
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding AttachmentUrl}" Value="">
-                                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Image.Style>
-                                            </Image>
+                                            <!-- ИЗМЕНЕНИЕ: Улучшенный блок для изображений с анимацией загрузки -->
+                                            <Border CornerRadius="8" Margin="0,0,0,5" ClipToBounds="True">
+                                                <!-- Этот Border будет иметь мерцающий фон-заглушку -->
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                        <GradientStop Color="#FF333333" Offset="0.0" />
+                                                        <GradientStop Color="#FF4A4A4A" Offset="0.5" />
+                                                        <GradientStop Color="#FF333333" Offset="1.0" />
+                                                        <Brush.Transform>
+                                                            <TranslateTransform X="-400" Y="0" />
+                                                        </Brush.Transform>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+
+                                                <!-- Триггер для запуска анимации мерцания -->
+                                                <Border.Triggers>
+                                                    <EventTrigger RoutedEvent="Loaded">
+                                                        <BeginStoryboard Storyboard="{StaticResource ShimmerAnimation}"/>
+                                                    </EventTrigger>
+                                                </Border.Triggers>
+
+                                                <Image Source="{Binding AttachmentUrl, Converter={StaticResource AvatarUrlConverter}}" 
+                                                       MaxWidth="250" MaxHeight="250" Cursor="Hand" 
+                                                       MouseLeftButtonDown="Image_MouseLeftButtonDown"
+                                                       Stretch="UniformToFill">
+                                                    <Image.Style>
+                                                        <Style TargetType="Image">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding AttachmentUrl, FallbackValue='', TargetNullValue=''}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Image.Style>
+                                                    <!-- Плавное появление самого изображения после загрузки -->
+                                                    <Image.Triggers>
+                                                        <EventTrigger RoutedEvent="Loaded">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                    </Image.Triggers>
+                                                </Image>
+                                            </Border>
 
                                             <TextBlock Text="{Binding MessageText}" TextWrapping="Wrap" FontSize="14" Visibility="{Binding MessageText, Converter={StaticResource TextMessageToVisibilityConverter}}"/>
 
