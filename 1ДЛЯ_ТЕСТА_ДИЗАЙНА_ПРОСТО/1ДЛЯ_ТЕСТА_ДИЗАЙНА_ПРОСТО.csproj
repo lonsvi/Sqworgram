@@ -359,6 +359,7 @@
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ThemeManager.cs" />
     <Compile Include="ThemeSettingsPage.xaml.cs">
       <DependentUpon>ThemeSettingsPage.xaml</DependentUpon>
     </Compile>
@@ -400,6 +401,9 @@
     </Page>
     <Page Include="ThemeSettingsPage.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Default.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

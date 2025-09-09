@@ -5,31 +5,66 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d"
       Title="ThemeSettingsPage" d:DesignHeight="600" d:DesignWidth="1000">
-    <Page.Resources>
-        <!-- Ресурсы стилей, скопированные для единообразия -->
-        <Color x:Key="AccentColorValue">#FF6A359C</Color>
-        <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
-        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
-        <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
-        <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
-        <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
-        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
 
+    <Page.Resources>
         <!-- Анимации -->
         <Storyboard x:Key="ButtonHoverOn">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.05" Duration="0:0:0.1"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.05" Duration="0:0:0.1"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.05" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.05" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
         <Storyboard x:Key="ButtonHoverOff">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!-- ИЗМЕНЕНИЕ: Новые, улучшенные анимации для кнопок-пресетов -->
+        <Storyboard x:Key="PresetButtonHoverOn">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.15" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.15" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)" To="0.6" Duration="0:0:0.2"/>
+        </Storyboard>
+        <Storyboard x:Key="PresetButtonHoverOff">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)" To="0" Duration="0:0:0.2"/>
         </Storyboard>
 
         <!-- Стили контролов -->
         <Style x:Key="IconButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
             <Setter Property="Width" Value="40"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -42,7 +77,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource HoverBackgroundColor}"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource HoverBackgroundColor}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -50,9 +85,9 @@
             </Setter>
         </Style>
         <Style x:Key="ModernTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
-            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -66,7 +101,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -74,20 +109,23 @@
             </Setter>
         </Style>
         <Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Background" Value="{DynamicResource AccentColorBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="14,12"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform/>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
-                            <Border.RenderTransform>
-                                <ScaleTransform ScaleX="1" ScaleY="1" CenterX="125" CenterY="22.5"/>
-                            </Border.RenderTransform>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -114,6 +152,9 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border" CornerRadius="20" Width="40" Height="40" BorderBrush="Transparent" BorderThickness="2">
+                            <Border.Effect>
+                                <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="15" Opacity="0"/>
+                            </Border.Effect>
                             <Border.RenderTransform>
                                 <ScaleTransform ScaleX="1" ScaleY="1" CenterX="20" CenterY="20"/>
                             </Border.RenderTransform>
@@ -121,12 +162,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="White"/>
                                 <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOn}"/>
+                                    <BeginStoryboard Storyboard="{StaticResource PresetButtonHoverOn}"/>
                                 </Trigger.EnterActions>
                                 <Trigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOff}"/>
+                                    <BeginStoryboard Storyboard="{StaticResource PresetButtonHoverOff}"/>
                                 </Trigger.ExitActions>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -136,18 +176,63 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{StaticResource PrimaryBackgroundColor}">
+    <!-- ИЗМЕНЕНИЕ: Добавлен триггер на загрузку страницы для запуска анимаций -->
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <!-- Title -->
+                    <DoubleAnimation Storyboard.TargetName="TitleText" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" BeginTime="0:0:0.1"/>
+                    <ThicknessAnimation Storyboard.TargetName="TitleText" Storyboard.TargetProperty="Margin" From="0,50,0,25" To="0,30,0,25" Duration="0:0:0.5" BeginTime="0:0:0.1">
+                        <ThicknessAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+
+                    <!-- Presets Section -->
+                    <DoubleAnimation Storyboard.TargetName="PresetsTitle" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" BeginTime="0:0:0.2"/>
+                    <ThicknessAnimation Storyboard.TargetName="PresetsTitle" Storyboard.TargetProperty="Margin" From="0,20,0,10" To="0,0,0,10" Duration="0:0:0.5" BeginTime="0:0:0.2">
+                        <ThicknessAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+                    <DoubleAnimation Storyboard.TargetName="PresetsBorder" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" BeginTime="0:0:0.3"/>
+                    <ThicknessAnimation Storyboard.TargetName="PresetsBorder" Storyboard.TargetProperty="Margin" From="0,20,0,0" To="0" Duration="0:0:0.5" BeginTime="0:0:0.3">
+                        <ThicknessAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+
+                    <!-- Custom Section -->
+                    <DoubleAnimation Storyboard.TargetName="CustomTitle" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" BeginTime="0:0:0.4"/>
+                    <ThicknessAnimation Storyboard.TargetName="CustomTitle" Storyboard.TargetProperty="Margin" From="0,45,0,10" To="0,25,0,10" Duration="0:0:0.5" BeginTime="0:0:0.4">
+                        <ThicknessAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+                    <DoubleAnimation Storyboard.TargetName="CustomBorder" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" BeginTime="0:0:0.5"/>
+                    <ThicknessAnimation Storyboard.TargetName="CustomBorder" Storyboard.TargetProperty="Margin" From="0,20,0,0" To="0" Duration="0:0:0.5" BeginTime="0:0:0.5">
+                        <ThicknessAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </ThicknessAnimation.EasingFunction>
+                    </ThicknessAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Page.Triggers>
+
+    <Grid Background="{DynamicResource PrimaryBackgroundColor}">
         <Button x:Name="BackButton" Style="{StaticResource IconButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" Click="BackButton_Click" Panel.ZIndex="1">
             <Path Data="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
         </Button>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="500">
-                <TextBlock Text="Настройка темы" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,30,0,25"/>
+                <TextBlock x:Name="TitleText" Text="Настройка темы" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,30,0,25" Opacity="0"/>
 
                 <!-- Предустановленные темы -->
-                <TextBlock Text="Готовые темы" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,10" Opacity="0.5"/>
-                <Border CornerRadius="10" Background="{StaticResource SecondaryBackgroundColor}" Padding="15">
+                <TextBlock x:Name="PresetsTitle" Text="Готовые темы" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,10" Opacity="0"/>
+                <Border x:Name="PresetsBorder" CornerRadius="10" Background="{DynamicResource SecondaryBackgroundColor}" Padding="15" Opacity="0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Style="{StaticResource ThemePresetButtonStyle}" Tag="#FF6A359C;#FF4A00E0;#FF8E2DE2" Click="PresetButton_Click" ToolTip="Фиолетовая (по-умолчанию)">
                             <Button.Background>
@@ -185,10 +270,10 @@
                 </Border>
 
                 <!-- Кастомная настройка -->
-                <TextBlock Text="Своя тема" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0.5"/>
-                <Border CornerRadius="10" Background="{StaticResource SecondaryBackgroundColor}" Padding="15">
+                <TextBlock x:Name="CustomTitle" Text="Своя тема" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0"/>
+                <Border x:Name="CustomBorder" CornerRadius="10" Background="{DynamicResource SecondaryBackgroundColor}" Padding="15" Opacity="0">
                     <StackPanel>
-                        <TextBlock Text="Цвет акцента (пузыри, выделение)" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,0,0,5"/>
+                        <TextBlock Text="Цвет акцента (пузыри, выделение)" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -198,7 +283,7 @@
                             <Rectangle Grid.Column="1" x:Name="AccentColorPreview" Width="38" Height="38" RadiusX="10" RadiusY="10" Margin="10,0,0,0" Stroke="#55FFFFFF" StrokeThickness="1"/>
                         </Grid>
 
-                        <TextBlock Text="Цвет фона №1 (левый верхний)" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,15,0,5"/>
+                        <TextBlock Text="Цвет фона №1 (левый верхний)" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" Margin="0,15,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -208,7 +293,7 @@
                             <Rectangle Grid.Column="1" x:Name="BlobColor1Preview" Width="38" Height="38" RadiusX="10" RadiusY="10" Margin="10,0,0,0" Stroke="#55FFFFFF" StrokeThickness="1"/>
                         </Grid>
 
-                        <TextBlock Text="Цвет фона №2 (правый нижний)" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,15,0,5"/>
+                        <TextBlock Text="Цвет фона №2 (правый нижний)" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" Margin="0,15,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>

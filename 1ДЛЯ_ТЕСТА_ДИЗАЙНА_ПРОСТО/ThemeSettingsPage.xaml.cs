@@ -66,7 +66,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
                 ColorConverter.ConvertFromString(BlobColor2TextBox.Text);
 
                 ApplyAndSaveTheme(AccentColorTextBox.Text, BlobColor1TextBox.Text, BlobColor2TextBox.Text);
-                MainWindow.AppWindow?.ShowNotification("Ваша тема сохранена!");
+                MainWindow.AppWindow?.ShowNotification("Ваша тема сохранена! Чтобы применилась полностью, перезайдите!");
             }
             catch
             {
@@ -86,6 +86,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
             Properties.Settings.Default.BlobColor1 = blob1;
             Properties.Settings.Default.BlobColor2 = blob2;
             Properties.Settings.Default.Save();
+            ThemeManager.ApplyTheme(accent, blob1, blob2);
         }
 
         private void ColorTextBox_TextChanged(object sender, TextChangedEventArgs e)

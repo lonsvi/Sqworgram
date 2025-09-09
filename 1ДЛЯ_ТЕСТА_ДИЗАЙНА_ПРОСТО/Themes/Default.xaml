@@ -1,0 +1,43 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- =================================================================================== -->
+    <!-- DYNAMIC COLORS & BRUSHES (These change based on user's theme settings)              -->
+    <!-- =================================================================================== -->
+
+    <!-- Raw Colors (controlled by ThemeManager.cs) -->
+    <Color x:Key="AccentColorValue">#FF6A359C</Color>
+    <Color x:Key="BlobColor1Value">#FF4A00E0</Color>
+    <Color x:Key="BlobColor2Value">#FF8E2DE2</Color>
+
+    <!-- Brushes that use the dynamic colors -->
+    <SolidColorBrush x:Key="AccentColorBrush" Color="{DynamicResource AccentColorValue}"/>
+
+    <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="{DynamicResource AccentColorValue}" Offset="0.0" />
+        <GradientStop Color="#321061" Offset="0.5" />
+        <!-- This middle color can also be made dynamic later if you want -->
+        <GradientStop Color="{DynamicResource AccentColorValue}" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <RadialGradientBrush x:Key="Blob1Brush">
+        <GradientStop Color="{DynamicResource BlobColor1Value}" Offset="0"/>
+        <GradientStop Color="Transparent" Offset="1"/>
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="Blob2Brush">
+        <GradientStop Color="{DynamicResource BlobColor2Value}" Offset="0"/>
+        <GradientStop Color="Transparent" Offset="1"/>
+    </RadialGradientBrush>
+
+    <!-- =================================================================================== -->
+    <!-- STATIC COLORS & BRUSHES (These are constant across all themes)                      -->
+    <!-- =================================================================================== -->
+    <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
+    <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
+    <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
+    <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
+    <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
+
+</ResourceDictionary>

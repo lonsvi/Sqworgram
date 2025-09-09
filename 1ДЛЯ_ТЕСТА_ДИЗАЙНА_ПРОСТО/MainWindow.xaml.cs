@@ -12,6 +12,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         public MainWindow()
         {
             InitializeComponent();
+            ThemeManager.ApplyThemeFromSettings();
             AppWindow = this;
             MainFrame.Navigate(new LoginPage());
         }

@@ -6,18 +6,9 @@
       mc:Ignorable="d"
       Title="RegisterPage" d:DesignHeight="600" d:DesignWidth="1000">
 
+    <!-- ИЗМЕНЕНИЕ: Все ресурсы стилей удалены и теперь будут браться из центрального файла Themes/Default.xaml -->
     <Page.Resources>
-        <!-- Цветовая палитра -->
-        <Color x:Key="AccentColorValue">#FF007AFF</Color>
-        <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
-        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
-        <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
-        <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
-        <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
-        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
-
-        <!-- Анимации -->
+        <!-- Анимации остаются локальными, так как они специфичны для этой страницы -->
         <Storyboard x:Key="ButtonHoverOn">
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.03" Duration="0:0:0.1"/>
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.03" Duration="0:0:0.1"/>
@@ -32,7 +23,6 @@
         <Storyboard x:Key="ControlFocusOff">
             <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0" Duration="0:0:0.2"/>
         </Storyboard>
-
         <Storyboard x:Key="BlobAnimation1" RepeatBehavior="Forever" AutoReverse="True">
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.2" Duration="0:0:25"/>
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.2" Duration="0:0:25"/>
@@ -44,10 +34,10 @@
             <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="-70" Duration="0:0:40"/>
         </Storyboard>
 
-        <!-- Стили для полей ввода -->
+        <!-- Стили для полей ввода (теперь используют динамические ресурсы) -->
         <Style x:Key="ModernTextBoxBase" TargetType="Control">
-            <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -58,13 +48,13 @@
                     <ControlTemplate TargetType="Control">
                         <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
                             <Border.Effect>
-                                <DropShadowEffect x:Name="shadow" ShadowDepth="0" Color="{StaticResource AccentColorValue}" BlurRadius="10" Opacity="0"/>
+                                <DropShadowEffect x:Name="shadow" ShadowDepth="0" Color="{DynamicResource AccentColorValue}" BlurRadius="10" Opacity="0"/>
                             </Border.Effect>
                             <ScrollViewer x:Name="PART_ContentHost"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentGradientBrush}"/>
                                 <Trigger.EnterActions>
                                     <BeginStoryboard Storyboard="{StaticResource ControlFocusOn}"/>
                                 </Trigger.EnterActions>
@@ -78,16 +68,16 @@
             </Setter>
         </Style>
         <Style x:Key="ModernTextBox" TargetType="TextBox" BasedOn="{StaticResource ModernTextBoxBase}">
-            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}"/>
         </Style>
         <Style x:Key="ModernPasswordBox" TargetType="PasswordBox" BasedOn="{StaticResource ModernTextBoxBase}">
-            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}"/>
         </Style>
 
-        <!-- Стили для кнопок -->
+        <!-- Стили для кнопок (теперь используют динамические ресурсы) -->
         <Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Background" Value="{DynamicResource AccentGradientBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -120,9 +110,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
         <Style x:Key="TextButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
             <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -145,19 +136,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Page.Resources>
 
-    <Grid Background="{StaticResource PrimaryBackgroundColor}" ClipToBounds="True">
-        <!-- Контейнер для анимированных "капель" -->
+    <Grid Background="{DynamicResource PrimaryBackgroundColor}" ClipToBounds="True">
         <Grid>
-            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.8" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0">
-                <Border.Background>
-                    <RadialGradientBrush>
-                        <GradientStop Color="#4A00E0" Offset="0"/>
-                        <GradientStop Color="Transparent" Offset="1"/>
-                    </RadialGradientBrush>
-                </Border.Background>
+            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.8" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0"
+                    Background="{DynamicResource Blob1Brush}">
                 <Border.Effect>
                     <BlurEffect Radius="150"/>
                 </Border.Effect>
@@ -174,13 +158,8 @@
                 </Border.Triggers>
             </Border>
 
-            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150">
-                <Border.Background>
-                    <RadialGradientBrush>
-                        <GradientStop Color="#8E2DE2" Offset="0"/>
-                        <GradientStop Color="Transparent" Offset="1"/>
-                    </RadialGradientBrush>
-                </Border.Background>
+            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150"
+                    Background="{DynamicResource Blob2Brush}">
                 <Border.Effect>
                     <BlurEffect Radius="200"/>
                 </Border.Effect>
@@ -198,7 +177,6 @@
             </Border>
         </Grid>
 
-        <!-- ИЗМЕНЕНИЕ: Усилен эффект Glassmorphism с сохранением темного стиля -->
         <Border x:Name="RegisterPanel" Background="#992B2B2B" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
             <Border.Style>
                 <Style TargetType="Border">
@@ -224,12 +202,12 @@
             </Border.Effect>
 
             <StackPanel Margin="30">
-                <TextBlock Text="Создание аккаунта" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
-                <TextBlock Text="Логин" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Создание аккаунта" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+                <TextBlock Text="Логин" Foreground="{DynamicResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
-                <TextBlock Text="Пароль" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Пароль" Foreground="{DynamicResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,15"/>
-                <TextBlock Text="Повторите пароль" Foreground="{StaticResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
+                <TextBlock Text="Повторите пароль" Foreground="{DynamicResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
                 <PasswordBox x:Name="ConfirmPasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,25"/>
                 <Button Content="Зарегистрироваться" Style="{StaticResource PrimaryButton}" Margin="0,10,0,15" Click="RegisterButton_Click"/>
                 <Button Content="Уже есть аккаунт? Войти" Style="{StaticResource TextButton}" HorizontalAlignment="Center" Click="BackButton_Click"/>
@@ -237,4 +215,3 @@
         </Border>
     </Grid>
 </Page>
-

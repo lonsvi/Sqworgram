@@ -3,57 +3,51 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
+// ИЗМЕНЕНИЕ: System.Windows.Threading больше не нужен
+// using System.Windows.Threading; 
 
 namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 {
     public partial class NotificationControl : UserControl
     {
-        private DispatcherTimer _lifeTimer;
+        // ИЗМЕНЕНИЕ: DispatcherTimer полностью удален, так как мы используем анимацию
+        // private DispatcherTimer _lifeTimer;
 
-        // ИЗМЕНЕНИЕ: Конструктор теперь принимает кисть для цвета акцента
         public NotificationControl(string message, bool isError, Brush accentBrush)
         {
             InitializeComponent();
             MessageText.Text = message;
 
-            // Устанавливаем Foreground для всего UserControl. 
-            // XAML будет использовать этот цвет для иконки и прогресс-бара.
             this.Foreground = accentBrush;
 
             if (isError)
             {
                 IconSuccess.Visibility = Visibility.Collapsed;
                 IconError.Visibility = Visibility.Visible;
-                // Для ошибки оставляем красный цвет
                 NotificationBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#80F44336"));
             }
             else
             {
                 IconSuccess.Visibility = Visibility.Visible;
                 IconError.Visibility = Visibility.Collapsed;
-                // ИЗМЕНЕНИЕ: Для успеха используем цвет акцента с прозрачностью
                 var accentWithOpacity = accentBrush.Clone();
                 accentWithOpacity.Opacity = 0.5;
                 NotificationBorder.BorderBrush = accentWithOpacity;
             }
 
-            _lifeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
-            _lifeTimer.Tick += LifeTimer_Tick;
+            // ИЗМЕНЕНИЕ: Инициализация таймера удалена
         }
 
-        private void LifeTimer_Tick(object sender, EventArgs e)
-        {
-            LifeProgressBar.Value -= 1;
-            if (LifeProgressBar.Value <= 0)
-            {
-                Close();
-            }
-        }
+        // ИЗМЕНЕНИЕ: Метод таймера удален
+        // private void LifeTimer_Tick(object sender, EventArgs e) { ... }
 
         public void Close()
         {
-            _lifeTimer.Stop();
+            // ИЗМЕНЕНИЕ: Останавливаем все анимации на этом контроле перед его закрытием
+            // Это предотвратит любые конфликты, если пользователь нажмет кнопку закрытия вручную
+            this.BeginAnimation(OpacityProperty, null);
+            LifeProgressBar.BeginAnimation(ProgressBar.ValueProperty, null);
+
             var fadeOutAnimation = new DoubleAnimation { From = 1, To = 0, Duration = new Duration(TimeSpan.FromSeconds(0.3)) };
             fadeOutAnimation.Completed += (s, a) =>
             {
@@ -69,9 +63,23 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            LifeProgressBar.Maximum = 100; // 50ms * 100 = 5 seconds
+            // ИЗМЕНЕНИЕ: Вместо запуска таймера, мы теперь запускаем плавную анимацию
+            LifeProgressBar.Maximum = 100;
             LifeProgressBar.Value = 100;
-            _lifeTimer.Start();
+
+            // Создаем анимацию, которая будет изменять значение ProgressBar от 100 до 0 за 5 секунд
+            var lifeAnimation = new DoubleAnimation
+            {
+                From = 100,
+                To = 0,
+                Duration = new Duration(TimeSpan.FromSeconds(5))
+            };
+
+            // Когда анимация завершится, вызываем метод Close(), чтобы уведомление исчезло
+            lifeAnimation.Completed += (s, a) => Close();
+
+            // Применяем и запускаем анимацию
+            LifeProgressBar.BeginAnimation(ProgressBar.ValueProperty, lifeAnimation);
         }
     }
 }

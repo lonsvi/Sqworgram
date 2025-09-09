@@ -7,23 +7,13 @@
       Title="SettingsPage" d:DesignHeight="600" d:DesignWidth="1000">
 
     <Page.Resources>
-        <!-- Ресурсы стилей, скопированные со страницы чатов для единообразия -->
-        <Color x:Key="AccentColorValue">#FF6A359C</Color>
-        <Color x:Key="ControlBackgroundColorValue">#FF333333</Color>
-
-        <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
-        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
-        <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
-        <SolidColorBrush x:Key="ControlBackgroundColor" Color="{StaticResource ControlBackgroundColorValue}"/>
-        <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
-        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
+        <!-- ИЗМЕНЕНИЕ: Все локальные цвета и стили удалены -->
 
         <!-- Стили контролов -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
-            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -37,7 +27,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -46,7 +36,7 @@
         </Style>
 
         <Style x:Key="BaseButton" TargetType="Button">
-            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -72,16 +62,16 @@
         </Style>
 
         <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource BaseButton}">
-            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Background" Value="{DynamicResource AccentColorBrush}"/>
         </Style>
 
         <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource BaseButton}">
-            <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+            <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
         </Style>
 
         <Style x:Key="IconButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
             <Setter Property="Width" Value="40"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -94,10 +84,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource HoverBackgroundColor}"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource HoverBackgroundColor}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -112,12 +102,12 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
-                        <Border x:Name="BackgroundBorder" CornerRadius="16" Background="{StaticResource ControlBackgroundColor}" BorderBrush="#44FFFFFF" BorderThickness="1">
+                        <Border x:Name="BackgroundBorder" CornerRadius="16" Background="{DynamicResource ControlBackgroundColor}" BorderBrush="#44FFFFFF" BorderThickness="1">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CheckStates">
                                     <VisualState x:Name="Checked">
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource AccentColorValue}" Duration="0:0:0.2"/>
+                                            <ColorAnimation Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{DynamicResource AccentColorValue}" Duration="0:0:0.2"/>
                                             <DoubleAnimation Storyboard.TargetName="ThumbTransform" Storyboard.TargetProperty="X" To="20" Duration="0:0:0.2">
                                                 <DoubleAnimation.EasingFunction>
                                                     <CubicEase EasingMode="EaseOut"/>
@@ -127,7 +117,7 @@
                                     </VisualState>
                                     <VisualState x:Name="Unchecked">
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource ControlBackgroundColorValue}" Duration="0:0:0.2"/>
+                                            <ColorAnimation Storyboard.TargetName="BackgroundBorder" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{Binding Color, Source={StaticResource ControlBackgroundColor}}" Duration="0:0:0.2"/>
                                             <DoubleAnimation Storyboard.TargetName="ThumbTransform" Storyboard.TargetProperty="X" To="0" Duration="0:0:0.2">
                                                 <DoubleAnimation.EasingFunction>
                                                     <CubicEase EasingMode="EaseOut"/>
@@ -196,13 +186,13 @@
 
     </Page.Resources>
 
-    <Grid Background="{StaticResource PrimaryBackgroundColor}">
-        <Button x:Name="BackButton" Style="{StaticResource IconButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" Click="BackToChats_Click" Panel.ZIndex="1"> 
+    <Grid Background="{DynamicResource PrimaryBackgroundColor}">
+        <Button x:Name="BackButton" Style="{StaticResource IconButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" Click="BackToChats_Click" Panel.ZIndex="1">
             <Path Data="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
         </Button>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <Border x:Name="SettingsPanel" Background="{StaticResource SecondaryBackgroundColor}" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="450" Margin="0,30" d:Opacity="1">
+            <Border x:Name="SettingsPanel" Background="{DynamicResource SecondaryBackgroundColor}" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="450" Margin="0,30" d:Opacity="1">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Opacity" Value="0"/>
@@ -227,10 +217,10 @@
                 </Border.Effect>
 
                 <StackPanel Margin="30">
-                    <TextBlock Text="Настройки" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
-                    <TextBlock Text="Профиль" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,10" Opacity="0.5"/>
+                    <TextBlock Text="Настройки" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+                    <TextBlock Text="Профиль" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,10" Opacity="0.5"/>
 
-                    <Border CornerRadius="10" Background="{StaticResource ControlBackgroundColor}" Padding="15">
+                    <Border CornerRadius="10" Background="{DynamicResource ControlBackgroundColor}" Padding="15">
                         <StackPanel>
                             <Border Width="100" Height="100" CornerRadius="50" HorizontalAlignment="Center" Margin="0,0,0,15">
                                 <Border.Background>
@@ -242,18 +232,18 @@
                                     </Image.Clip>
                                 </Image>
                             </Border>
-                            <TextBlock x:Name="UserLoginTextBlock" Foreground="{StaticResource PrimaryTextColor}" TextAlignment="Center" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,20"/>
-                            <TextBlock Text="URL аватара" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="UserLoginTextBlock" Foreground="{DynamicResource PrimaryTextColor}" TextAlignment="Center" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,20"/>
+                            <TextBlock Text="URL аватара" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" Margin="0,0,0,5"/>
                             <TextBox x:Name="AvatarUrlTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
                             <Button Content="Сохранить аватар" Style="{StaticResource PrimaryButton}" Click="SaveAvatarUrl_Click"/>
                         </StackPanel>
                     </Border>
 
-                    <TextBlock Text="Внешний вид" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0.5"/>
+                    <TextBlock Text="Внешний вид" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0.5"/>
                     <Button Content="Настроить тему чата" Style="{StaticResource SecondaryButton}" Click="ThemeSettings_Click"/>
 
-                    <TextBlock Text="Производительность" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0.5"/>
-                    <Border CornerRadius="10" Background="{StaticResource ControlBackgroundColor}" Padding="15">
+                    <TextBlock Text="Производительность" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0.5"/>
+                    <Border CornerRadius="10" Background="{DynamicResource ControlBackgroundColor}" Padding="15">
                         <StackPanel>
                             <Grid Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
@@ -261,8 +251,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Анимация фона" Foreground="{StaticResource PrimaryTextColor}"/>
-                                    <TextBlock Text="Плавная анимация на фоне" Foreground="{StaticResource SecondaryTextColor}" FontSize="12"/>
+                                    <TextBlock Text="Анимация фона" Foreground="{DynamicResource PrimaryTextColor}"/>
+                                    <TextBlock Text="Плавная анимация на фоне" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12"/>
                                 </StackPanel>
                                 <ToggleButton x:Name="AnimationToggle" Grid.Column="1" Style="{StaticResource ModernToggleSwitch}" Checked="AnimationToggle_Changed" Unchecked="AnimationToggle_Changed"/>
                             </Grid>
@@ -273,8 +263,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Эффект 'стекла'" Foreground="{StaticResource PrimaryTextColor}"/>
-                                    <TextBlock Text="Полупрозрачные элементы интерфейса" Foreground="{StaticResource SecondaryTextColor}" FontSize="12"/>
+                                    <TextBlock Text="Эффект 'стекла'" Foreground="{DynamicResource PrimaryTextColor}"/>
+                                    <TextBlock Text="Полупрозрачные элементы интерфейса" Foreground="{DynamicResource SecondaryTextColor}" FontSize="12"/>
                                 </StackPanel>
                                 <ToggleButton x:Name="GlassToggle" Grid.Column="1" Style="{StaticResource ModernToggleSwitch}" Checked="GlassToggle_Changed" Unchecked="GlassToggle_Changed"/>
                             </Grid>
