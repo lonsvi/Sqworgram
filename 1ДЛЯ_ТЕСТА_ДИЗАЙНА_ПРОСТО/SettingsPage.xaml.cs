@@ -52,7 +52,8 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
             currentAvatarUrl = AvatarUrlTextBox.Text;
             dbHelper.UpdateAvatarUrl(currentUserId, currentAvatarUrl);
             LoadAvatar();
-            MessageBox.Show("Аватар успешно обновлен!");
+            // ИЗМЕНЕНИЕ: Используем новую систему уведомлений
+            MainWindow.AppWindow?.ShowNotification("Аватар успешно обновлен!");
         }
 
         private void Logout_Click(object sender, RoutedEventArgs e)
@@ -62,10 +63,9 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
             this.NavigationService?.Navigate(new LoginPage());
         }
 
-        // НОВЫЕ МЕТОДЫ: Сохранение настроек при изменении переключателей
         private void AnimationToggle_Changed(object sender, RoutedEventArgs e)
         {
-            if (sender is ToggleButton toggle)
+            if (sender is ToggleButton toggle && IsLoaded)
             {
                 Properties.Settings.Default.AnimationsEnabled = toggle.IsChecked ?? false;
                 Properties.Settings.Default.Save();
@@ -74,11 +74,17 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 
         private void GlassToggle_Changed(object sender, RoutedEventArgs e)
         {
-            if (sender is ToggleButton toggle)
+            if (sender is ToggleButton toggle && IsLoaded)
             {
                 Properties.Settings.Default.GlassEffectEnabled = toggle.IsChecked ?? false;
                 Properties.Settings.Default.Save();
             }
         }
+
+        private void ThemeSettings_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new ThemeSettingsPage());
+        }
     }
 }
+

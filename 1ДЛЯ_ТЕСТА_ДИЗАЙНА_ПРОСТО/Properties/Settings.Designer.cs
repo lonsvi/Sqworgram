@@ -94,5 +94,41 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО.Properties {
                 this["GlassEffectEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF6A359C")]
+        public string AccentColor {
+            get {
+                return ((string)(this["AccentColor"]));
+            }
+            set {
+                this["AccentColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF4A00E0")]
+        public string BlobColor1 {
+            get {
+                return ((string)(this["BlobColor1"]));
+            }
+            set {
+                this["BlobColor1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF8E2DE2")]
+        public string BlobColor2 {
+            get {
+                return ((string)(this["BlobColor2"]));
+            }
+            set {
+                this["BlobColor2"] = value;
+            }
+        }
     }
 }

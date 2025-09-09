@@ -1,0 +1,228 @@
+﻿<Page x:Class="_1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО.ThemeSettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d"
+      Title="ThemeSettingsPage" d:DesignHeight="600" d:DesignWidth="1000">
+    <Page.Resources>
+        <!-- Ресурсы стилей, скопированные для единообразия -->
+        <Color x:Key="AccentColorValue">#FF6A359C</Color>
+        <SolidColorBrush x:Key="AccentColor" Color="{StaticResource AccentColorValue}"/>
+        <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
+        <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
+        <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
+        <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
+        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>
+
+        <!-- Анимации -->
+        <Storyboard x:Key="ButtonHoverOn">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.05" Duration="0:0:0.1"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.05" Duration="0:0:0.1"/>
+        </Storyboard>
+        <Storyboard x:Key="ButtonHoverOff">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/>
+        </Storyboard>
+
+        <!-- Стили контролов -->
+        <Style x:Key="IconButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource HoverBackgroundColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource ControlBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" CenterX="125" CenterY="22.5"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.9"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOn}"/>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOff}"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ThemePresetButtonStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="20" Width="40" Height="40" BorderBrush="Transparent" BorderThickness="2">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" CenterX="20" CenterY="20"/>
+                            </Border.RenderTransform>
+                            <Ellipse Fill="{TemplateBinding Background}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="White"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOn}"/>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOff}"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{StaticResource PrimaryBackgroundColor}">
+        <Button x:Name="BackButton" Style="{StaticResource IconButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15" Click="BackButton_Click" Panel.ZIndex="1">
+            <Path Data="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" Width="20"/>
+        </Button>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="500">
+                <TextBlock Text="Настройка темы" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,30,0,25"/>
+
+                <!-- Предустановленные темы -->
+                <TextBlock Text="Готовые темы" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,10" Opacity="0.5"/>
+                <Border CornerRadius="10" Background="{StaticResource SecondaryBackgroundColor}" Padding="15">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Style="{StaticResource ThemePresetButtonStyle}" Tag="#FF6A359C;#FF4A00E0;#FF8E2DE2" Click="PresetButton_Click" ToolTip="Фиолетовая (по-умолчанию)">
+                            <Button.Background>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#FF6A359C" Offset="0"/>
+                                    <GradientStop Color="#FF421061" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <Button Style="{StaticResource ThemePresetButtonStyle}" Tag="#FF0077be;#FF00529B;#FF00A4E4" Click="PresetButton_Click" Margin="15,0,0,0" ToolTip="Океан">
+                            <Button.Background>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#FF0077be" Offset="0"/>
+                                    <GradientStop Color="#FF00529B" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <Button Style="{StaticResource ThemePresetButtonStyle}" Tag="#FFF47C3C;#FFFF5F6D;#FFFFC371" Click="PresetButton_Click" Margin="15,0,0,0" ToolTip="Закат">
+                            <Button.Background>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#FFF47C3C" Offset="0"/>
+                                    <GradientStop Color="#FFFF5F6D" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                        <Button Style="{StaticResource ThemePresetButtonStyle}" Tag="#FF2E7D32;#FF1B5E20;#FF4CAF50" Click="PresetButton_Click" Margin="15,0,0,0" ToolTip="Лес">
+                            <Button.Background>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#FF2E7D32" Offset="0"/>
+                                    <GradientStop Color="#FF1B5E20" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <!-- Кастомная настройка -->
+                <TextBlock Text="Своя тема" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" FontWeight="SemiBold" Margin="0,25,0,10" Opacity="0.5"/>
+                <Border CornerRadius="10" Background="{StaticResource SecondaryBackgroundColor}" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Цвет акцента (пузыри, выделение)" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,0,0,5"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" x:Name="AccentColorTextBox" Style="{StaticResource ModernTextBox}" TextChanged="ColorTextBox_TextChanged"/>
+                            <Rectangle Grid.Column="1" x:Name="AccentColorPreview" Width="38" Height="38" RadiusX="10" RadiusY="10" Margin="10,0,0,0" Stroke="#55FFFFFF" StrokeThickness="1"/>
+                        </Grid>
+
+                        <TextBlock Text="Цвет фона №1 (левый верхний)" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,15,0,5"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" x:Name="BlobColor1TextBox" Style="{StaticResource ModernTextBox}" TextChanged="ColorTextBox_TextChanged"/>
+                            <Rectangle Grid.Column="1" x:Name="BlobColor1Preview" Width="38" Height="38" RadiusX="10" RadiusY="10" Margin="10,0,0,0" Stroke="#55FFFFFF" StrokeThickness="1"/>
+                        </Grid>
+
+                        <TextBlock Text="Цвет фона №2 (правый нижний)" Foreground="{StaticResource SecondaryTextColor}" FontSize="12" Margin="0,15,0,5"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" x:Name="BlobColor2TextBox" Style="{StaticResource ModernTextBox}" TextChanged="ColorTextBox_TextChanged"/>
+                            <Rectangle Grid.Column="1" x:Name="BlobColor2Preview" Width="38" Height="38" RadiusX="10" RadiusY="10" Margin="10,0,0,0" Stroke="#55FFFFFF" StrokeThickness="1"/>
+                        </Grid>
+
+                        <Button Content="Сохранить свою тему" Style="{StaticResource PrimaryButton}" Margin="0,20,0,0" Click="SaveCustomTheme_Click"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
+

@@ -20,5 +20,14 @@
     <Setting Name="GlassEffectEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="AccentColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#FF6A359C</Value>
+    </Setting>
+    <Setting Name="BlobColor1" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#FF4A00E0</Value>
+    </Setting>
+    <Setting Name="BlobColor2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#FF8E2DE2</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

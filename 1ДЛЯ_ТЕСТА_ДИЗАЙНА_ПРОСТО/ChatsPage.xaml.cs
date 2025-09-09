@@ -107,8 +107,8 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 
         private async void ChatsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            isUnloading = false; // ИСПРАВЛЕНИЕ: Сбрасываем флаг при возвращении на страницу
-            ApplyPerformanceSettings();
+            isUnloading = false;
+            ApplyPerformanceAndThemeSettings();
 
             var currentUser = await Task.Run(() => dbHelper.GetUserById(currentUserId));
             if (currentUser != null) { currentAvatarUrl = currentUser.AvatarUrl; }
@@ -133,8 +133,10 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
             isPageLoaded = true;
         }
 
-        private void ApplyPerformanceSettings()
+        // ИЗМЕНЕНИЕ: Метод теперь также применяет настройки темы
+        private void ApplyPerformanceAndThemeSettings()
         {
+            // --- Управление производительностью ---
             bool animationsEnabled = Properties.Settings.Default.AnimationsEnabled;
             BackgroundAnimationGrid.Visibility = animationsEnabled ? Visibility.Visible : Visibility.Collapsed;
 
@@ -155,15 +157,36 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
                 setStyle(ChatHeaderBorder);
                 setStyle(MessageInputPanelBorder);
             }
+
+            // --- Управление темами ---
+            try
+            {
+                // Акцентный цвет
+                var accentColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.AccentColor);
+                Resources["AccentColorValue"] = accentColor;
+                Resources["AccentColor"] = new SolidColorBrush(accentColor);
+                Resources["AccentTextColor"] = new SolidColorBrush(accentColor);
+
+                // Цвета для фона
+                var blobColor1 = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.BlobColor1);
+                var blobColor2 = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.BlobColor2);
+                ((RadialGradientBrush)Blob1.Background).GradientStops[0].Color = blobColor1;
+                ((RadialGradientBrush)Blob2.Background).GradientStops[0].Color = blobColor2;
+            }
+            catch
+            {
+                // В случае ошибки (неверный формат цвета), ничего не делаем, останутся цвета по-умолчанию
+            }
         }
 
+        // ... (остальной код остается без изменений) ...
         private void ParentWindow_Activated(object sender, EventArgs e) => isWindowActive = true;
         private void ParentWindow_Deactivated(object sender, EventArgs e) => isWindowActive = false;
         private void ParentWindow_KeyDown(object sender, KeyEventArgs e) { if (isWindowActive && !MessageTextBox.IsFocused && !SearchTextBox.IsFocused && currentChatId != -1) { if (e.Key < Key.D0 || (e.Key > Key.Z && e.Key < Key.NumPad0)) return; MessageTextBox.Focus(); } }
         private async void StatusTimer_Tick(object sender, EventArgs e) { if (isUnloading || !IsLoaded) return; await LoadChatsAsync(false); if (isUnloading) return; if (currentChatId != -1 && otherUserId != -1) { var (isOnline, _, isTyping) = await Task.Run(() => dbHelper.GetUserStatus(otherUserId)); if (isUnloading) return; Dispatcher.Invoke(() => { if (isUnloading || !IsLoaded) return; TypingIndicator.Text = isTyping ? $"{selectedChatLogin} печатает..." : ""; TypingIndicator.Visibility = isTyping ? Visibility.Visible : Visibility.Collapsed; }); await CheckNewMessagesAsync(); } }
         private async Task LoadChatsAsync(bool fullReload) { var users = await Task.Run(() => dbHelper.GetUsers(currentUserId)); var favoriteChats = await Task.Run(() => dbHelper.GetFavoriteChats(currentUserId).ToHashSet()); string searchText = ""; await Dispatcher.InvokeAsync(() => { searchText = (SearchTextBox?.Text == "Поиск" ? "" : SearchTextBox?.Text.Trim().ToLower()) ?? ""; }); var chatItems = new List<object>(); foreach (var user in users.OrderBy(u => u.Login)) { int chatId = chatMapping.ContainsKey(user.Login) ? chatMapping[user.Login] : await Task.Run(() => dbHelper.GetOrCreateChat(currentUserId, user.Id)); chatMapping[user.Login] = chatId; bool shouldDisplay = (!isFavoriteMode || favoriteChats.Contains(chatId)) && (string.IsNullOrWhiteSpace(searchText) || user.Login.ToLower().Contains(searchText)); if (shouldDisplay) { chatItems.Add(new { user.Login, user.AvatarUrl, user.IsOnline, user.LastSeen, user.IsTyping }); } } if (isUnloading) return; Dispatcher.Invoke(() => { try { if (isUnloading || !IsLoaded || ChatListBox == null) return; object selectedItem = ChatListBox.SelectedItem; ChatListBox.ItemsSource = chatItems; if (selectedItem != null) { var currentLogin = ((dynamic)selectedItem).Login; ChatListBox.SelectedItem = ChatListBox.Items.Cast<object>().FirstOrDefault(i => ((dynamic)i).Login == currentLogin); } } catch { /* Игнорируем ошибку при выгрузке */ } }); }
         private async void ChatListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) { if (ChatListBox.SelectedItem == null) return; string newSelectedChat = ((dynamic)ChatListBox.SelectedItem).Login; if (newSelectedChat == selectedChatLogin && ChatArea.Visibility == Visibility.Visible) return; selectedChatLogin = newSelectedChat; currentChatId = chatMapping[selectedChatLogin]; var selectedUser = (await Task.Run(() => dbHelper.GetUsers(currentUserId))).FirstOrDefault(u => u.Login == selectedChatLogin); if (selectedUser.Id == 0) return; otherUserId = selectedUser.Id; await OpenChatAsync(selectedChatLogin); }
-        private async Task OpenChatAsync(string chatName) { Dispatcher.Invoke(() => { ChatPlaceholder.Visibility = Visibility.Collapsed; ChatArea.Visibility = Visibility.Visible; Messages.Clear(); ChatHeader.Text = chatName; ApplyPerformanceSettings(); }); var messages = await Task.Run(() => dbHelper.GetMessages(currentChatId)); foreach (var msg in messages.OrderBy(m => m.Timestamp)) { AddMessageToUI(msg.Id, msg.MessageText, msg.AttachmentUrl, msg.SenderId == currentUserId, msg.Timestamp); } lastMessageCheck = messages.Any() ? messages.Max(m => m.Timestamp) : DateTime.MinValue; Dispatcher.InvokeAsync(() => ChatScrollViewer?.ScrollToEnd()); }
+        private async Task OpenChatAsync(string chatName) { Dispatcher.Invoke(() => { ChatPlaceholder.Visibility = Visibility.Collapsed; ChatArea.Visibility = Visibility.Visible; Messages.Clear(); ChatHeader.Text = chatName; ApplyPerformanceAndThemeSettings(); }); var messages = await Task.Run(() => dbHelper.GetMessages(currentChatId)); foreach (var msg in messages.OrderBy(m => m.Timestamp)) { AddMessageToUI(msg.Id, msg.MessageText, msg.AttachmentUrl, msg.SenderId == currentUserId, msg.Timestamp); } lastMessageCheck = messages.Any() ? messages.Max(m => m.Timestamp) : DateTime.MinValue; Dispatcher.InvokeAsync(() => ChatScrollViewer?.ScrollToEnd()); }
         private async Task CheckNewMessagesAsync() { if (currentChatId == -1 || isUnloading) return; var newMessages = await Task.Run(() => dbHelper.GetMessagesAfter(currentChatId, lastMessageCheck)); if (isUnloading || !newMessages.Any()) return; foreach (var msg in newMessages) { if (!Messages.Any(m => m.Id == msg.Id)) { AddMessageToUI(msg.Id, msg.MessageText, msg.AttachmentUrl, msg.SenderId == currentUserId, msg.Timestamp); } } lastMessageCheck = newMessages.Max(m => m.Timestamp); Dispatcher.InvokeAsync(() => ChatScrollViewer?.ScrollToEnd()); }
         private void AddMessageToUI(int id, string message, string attachmentUrl, bool isSentByMe, DateTime timestamp) { if (isUnloading) return; Dispatcher.Invoke(() => { Messages.Add(new MessageViewModel { Id = id, MessageText = message, AttachmentUrl = attachmentUrl, IsSentByMe = isSentByMe, Timestamp = timestamp }); }); }
         private async void TranslateButton_Click(object sender, RoutedEventArgs e) { if (sender is Button button && button.Tag is MessageViewModel vm) { string originalText = vm.MessageText.Split(new[] { "\n\n[Перевод]:" }, StringSplitOptions.None)[0]; string direction = (TranslationDirectionComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "EN → RU"; string sourceLanguage = direction == "EN → RU" ? "en" : "ru"; string targetLanguage = direction == "EN → RU" ? "ru" : "en"; string translatedText = await translationService.TranslateTextAsync(originalText, sourceLanguage, targetLanguage); vm.MessageText = $"{originalText}\n\n[Перевод]: {translatedText}"; button.Visibility = Visibility.Collapsed; } }
@@ -183,4 +206,5 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         private void Page_Unloaded(object sender, RoutedEventArgs e) { isUnloading = true; statusTimer?.Stop(); Task.Run(() => { dbHelper.SetUserOnline(currentUserId, false); dbHelper.SetUserTyping(currentUserId, false); }); Window parentWindow = Window.GetWindow(this); if (parentWindow != null) { parentWindow.Activated -= ParentWindow_Activated; parentWindow.Deactivated -= ParentWindow_Deactivated; parentWindow.KeyDown -= ParentWindow_KeyDown; } }
     }
 }
+
 
