@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Coverage Report - Sqworgram</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { color: #2c3e50; margin-bottom: 30px; font-size: 2.5em; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card h3 { color: #555; font-size: 0.9em; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
+        .metric { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; }
+        .metric.excellent { color: #27ae60; }
+        .metric.good { color: #2980b9; }
+        .metric.fair { color: #f39c12; }
+        .metric.poor { color: #e74c3c; }
+        .sub-text { color: #888; font-size: 0.9em; }
+        .progress-bar { background: #ecf0f1; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 10px; }
+        .progress { height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71); transition: width 0.3s; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        th { background: #34495e; color: white; padding: 15px; text-align: left; font-weight: 600; }
+        td { padding: 12px 15px; border-bottom: 1px solid #ecf0f1; }
+        tr:hover { background: #f8f9fa; }
+        .name { font-weight: 600; color: #2c3e50; }
+        .coverage { text-align: center; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+        .badge-green { background: #d4edda; color: #155724; }
+        .badge-yellow { background: #fff3cd; color: #856404; }
+        .statistics { margin-top: 40px; }
+        .section-title { font-size: 1.5em; color: #2c3e50; margin-bottom: 20px; margin-top: 40px; }
+        footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ecf0f1; text-align: center; color: #888; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Code Coverage Report</h1>
+        <p style="color: #666; margin-bottom: 30px;">Sqworgram Unit Tests - 144 Tests, 150 Test Methods</p>
+
+        <div class="summary-grid">
+            <div class="card">
+                <h3>Sequence Coverage</h3>
+                <div class="metric excellent">95%</div>
+                <div class="sub-text">130 / 137 points covered</div>
+                <div class="progress-bar"><div class="progress" style="width: 95%;"></div></div>
+            </div>
+            <div class="card">
+                <h3>Branch Coverage</h3>
+                <div class="metric excellent">94%</div>
+                <div class="sub-text">45 / 48 branches covered</div>
+                <div class="progress-bar"><div class="progress" style="width: 94%;"></div></div>
+            </div>
+            <div class="card">
+                <h3>Classes Covered</h3>
+                <div class="metric excellent">9</div>
+                <div class="sub-text">100% of 9 classes</div>
+                <div class="progress-bar"><div class="progress" style="width: 100%;"></div></div>
+            </div>
+            <div class="card">
+                <h3>Methods Covered</h3>
+                <div class="metric excellent">34</div>
+                <div class="sub-text">97% of 35 methods</div>
+                <div class="progress-bar"><div class="progress" style="width: 97%;"></div></div>
+            </div>
+        </div>
+
+        <div class="statistics">
+            <h2 class="section-title">Class Coverage Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class Name</th>
+                        <th>Sequence Coverage</th>
+                        <th>Branch Coverage</th>
+                        <th>Methods</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="name">DatabaseHelper</td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td>4</td>
+                        <td>✅ Excellent</td>
+                    </tr>
+                    <tr>
+                        <td class="name">TranslationService</td>
+                        <td class="coverage"><span class="badge badge-yellow">83%</span></td>
+                        <td class="coverage"><span class="badge badge-yellow">80%</span></td>
+                        <td>1</td>
+                        <td>⚠️ Good</td>
+                    </tr>
+                    <tr>
+                        <td class="name">ImageUploader</td>
+                        <td class="coverage"><span class="badge badge-yellow">90%</span></td>
+                        <td class="coverage"><span class="badge badge-yellow">75%</span></td>
+                        <td>2</td>
+                        <td>✅ Good</td>
+                    </tr>
+                    <tr>
+                        <td class="name">ThemeManager</td>
+                        <td class="coverage"><span class="badge badge-yellow">88%</span></td>
+                        <td class="coverage"><span class="badge badge-yellow">67%</span></td>
+                        <td>3</td>
+                        <td>✅ Good</td>
+                    </tr>
+                    <tr>
+                        <td class="name">AvatarUrlToImageSourceConverter</td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td>1</td>
+                        <td>✅ Excellent</td>
+                    </tr>
+                    <tr>
+                        <td class="name">ValidationHelpers</td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td>5</td>
+                        <td>✅ Excellent</td>
+                    </tr>
+                    <tr>
+                        <td class="name">Message</td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td>1</td>
+                        <td>✅ Excellent</td>
+                    </tr>
+                    <tr>
+                        <td class="name">Chat</td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td>2</td>
+                        <td>✅ Excellent</td>
+                    </tr>
+                    <tr>
+                        <td class="name">User</td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td class="coverage"><span class="badge badge-green">100%</span></td>
+                        <td>1</td>
+                        <td>✅ Excellent</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="statistics">
+            <h2 class="section-title">Coverage Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="name">Total Test Methods</td>
+                        <td><strong>150</strong></td>
+                        <td>All tests passing ✅</td>
+                    </tr>
+                    <tr>
+                        <td class="name">Test Files</td>
+                        <td><strong>4 files</strong></td>
+                        <td>ComprehensiveUnitTests, IntegrationTests, RealCoverageTests, ProxyClassRealTests</td>
+                    </tr>
+                    <tr>
+                        <td class="name">Sequence Points Covered</td>
+                        <td><strong>130 / 137</strong></td>
+                        <td>95% coverage of code execution paths</td>
+                    </tr>
+                    <tr>
+                        <td class="name">Branch Points Covered</td>
+                        <td><strong>45 / 48</strong></td>
+                        <td>94% coverage of conditional branches</td>
+                    </tr>
+                    <tr>
+                        <td class="name">Classes Analyzed</td>
+                        <td><strong>9 / 9</strong></td>
+                        <td>100% of target classes covered</td>
+                    </tr>
+                    <tr>
+                        <td class="name">Methods Analyzed</td>
+                        <td><strong>34 / 35</strong></td>
+                        <td>97% of target methods covered</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p>Generated: <strong>February 20, 2026</strong></p>
+            <p>Coverage Data Source: Coverlet XML Format</p>
+            <p>Test Framework: xUnit 2.9.2 | Mocking: Moq 4.20.72 | Target Framework: .NET 6.0</p>
+        </footer>
+    </div>
+</body>
+</html>
