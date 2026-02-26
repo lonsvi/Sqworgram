@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Отключить сборку перед запуском тестов -->
+  <RunConfiguration>
+    <DisableAppDomain>false</DisableAppDomain>
+  </RunConfiguration>
+  
+  <!-- Для xUnit adapter -->
+  <xUnit>
+    <AppDomain>denied</AppDomain>
+  </xUnit>
+  
+  <!-- Coverlet Code Coverage Configuration -->
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura,opencover</Format>
+          <Exclude>[*.Tests]*,[*.Test]*,[*]*.xaml.cs,[*]App.xaml.cs,[*]App.config</Exclude>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SingleHit>false</SingleHit>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

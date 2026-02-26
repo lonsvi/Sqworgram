@@ -1,0 +1,98 @@
+## Файл lutignore используется в Live Unit Testing для игнорирования временных файлов Visual Studio, результатов сборки,
+## и файлов, созданных популярными надстройками Visual Studio при создании закрытой копии исходного дерева,
+## используемого Live Unit Testing для своей сборки.
+##
+## Этот файл имеет тот же формат, что и файл gitignore в Git (https://git-scm.com/docs/gitignore). На самом деле, в
+## случае, когда файл lutignore не найден, но найден файл gitignore, в Live Unit Testing будет напрямую использоваться
+## файл gitignore для вышеуказанной цели.
+
+# Файлы для пользователей
+*.suo
+*.user
+*.userprefs
+*.sln.docstates
+.vs/
+.vscode/
+.packages/
+.dotnet/
+.tools/
+.idea/
+
+# Результаты сборки
+[Dd]ebug/
+[Rr]elease/
+[Bb]inaries/
+[Bb]in/
+[Oo]bj/
+x64/
+TestResults/
+
+# Артефакты отладки
+launchSettings.json
+
+# Каталог Click-Once
+publish/
+
+# Опубликовать выходные данные в Интернете
+*.Publish.xml
+
+# NuGet
+packages/
+[Nn]u[Gg]et.exe
+*-packages.config
+*.nuget.props
+*.nuget.targets
+project.lock.json
+msbuild.binlog
+*.project.lock.json
+
+# Разное
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.wrn
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.scc
+sql/
+*.Cache
+ClientBin/
+[Ss]tyle[Cc]op.*
+~$*
+*~
+*.dbmdl
+*.[Pp]ublish.xml
+*.pfx
+*.publishsettings
+
+# Кэш и временные файлы
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.opendb
+*.VC.db
+AppPackages/
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings
+$RECYCLE.BIN/
+.DS_Store
+*wpftmp.*
