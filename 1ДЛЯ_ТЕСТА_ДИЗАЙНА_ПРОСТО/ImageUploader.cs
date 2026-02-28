@@ -20,12 +20,6 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         {
             try
             {
-                if (!File.Exists(filePath))
-                {
-                    Logger.LogError($"Image file not found: {filePath}");
-                    throw new FileNotFoundException($"Файл изображения не найден: {filePath}");
-                }
-
                 // Читаем файл в массив байтов
                 byte[] imageBytes = File.ReadAllBytes(filePath);
                 string base64Image = Convert.ToBase64String(imageBytes);
@@ -44,12 +38,10 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
                 var jsonResponse = System.Text.Json.JsonDocument.Parse(responseContent);
                 string imageUrl = jsonResponse.RootElement.GetProperty("data").GetProperty("url").GetString();
 
-                Logger.LogInfo($"Image uploaded successfully: {imageUrl}");
                 return imageUrl;
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Ошибка загрузки изображения на ImgBB", ex);
                 throw new Exception($"Ошибка загрузки изображения на ImgBB: {ex.Message}", ex);
             }
         }

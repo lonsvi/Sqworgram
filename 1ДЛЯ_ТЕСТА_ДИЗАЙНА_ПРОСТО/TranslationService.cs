@@ -30,7 +30,6 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
                     if (root.TryGetProperty("responseStatus", out var status) && status.GetInt32() == 200)
                     {
                         var translatedText = root.GetProperty("responseData").GetProperty("translatedText").GetString();
-                        Logger.LogInfo($"Translation successful: {sourceLanguage} -> {targetLanguage}");
                         return translatedText ?? "Ошибка перевода: пустой результат.";
                     }
                     else
@@ -38,14 +37,12 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
                         var errorMessage = root.TryGetProperty("responseDetails", out var details)
                             ? details.GetString()
                             : "Неизвестная ошибка перевода.";
-                        Logger.LogWarning($"Translation API error: {errorMessage}");
                         return $"Ошибка перевода: {errorMessage}";
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Translation service error for {sourceLanguage} -> {targetLanguage}", ex);
                 return $"Ошибка перевода: {ex.Message}";
             }
         }

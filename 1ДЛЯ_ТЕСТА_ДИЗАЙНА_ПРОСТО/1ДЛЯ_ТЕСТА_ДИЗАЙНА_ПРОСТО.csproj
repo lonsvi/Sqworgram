@@ -352,6 +352,7 @@
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="IDatabaseHelper.cs" />
     <Compile Include="ImageUploader.cs" />
+    <Compile Include="MessageViewModel.cs" />
     <Compile Include="NotificationControl.xaml.cs">
       <DependentUpon>NotificationControl.xaml</DependentUpon>
     </Compile>
@@ -361,6 +362,7 @@
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TextMessageToVisibilityConverter.cs" />
     <Compile Include="ThemeManager.cs" />
     <Compile Include="ThemeSettingsPage.xaml.cs">
       <DependentUpon>ThemeSettingsPage.xaml</DependentUpon>
@@ -407,6 +409,10 @@
     </Page>
     <Page Include="Themes\Default.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\LiquidGlassTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

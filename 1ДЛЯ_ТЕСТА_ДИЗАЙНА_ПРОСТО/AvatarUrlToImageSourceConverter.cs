@@ -10,11 +10,11 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string url = value as string;
-            Logger.LogInfo($"Converting AvatarUrl: {url}");
+            Console.WriteLine($"Converting AvatarUrl: {url}");
 
             if (string.IsNullOrWhiteSpace(url))
             {
-                Logger.LogWarning("AvatarUrl is null or empty.");
+                Console.WriteLine("AvatarUrl is null or empty.");
                 return null;
             }
 
@@ -24,12 +24,12 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
                 bitmap.BeginInit();
                 bitmap.UriSource = new Uri(url, UriKind.Absolute);
                 bitmap.EndInit();
-                Logger.LogInfo($"Successfully loaded image from {url}");
+                Console.WriteLine($"Successfully loaded image from {url}");
                 return bitmap;
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Failed to load image from {url}", ex);
+                Console.WriteLine($"Failed to load image from {url}. Error: {ex.Message}");
                 return null;
             }
         }

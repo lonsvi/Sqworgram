@@ -16,53 +16,6 @@ using System.Windows.Threading;
 
 namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 {
-    public class MessageViewModel : INotifyPropertyChanged
-    {
-        private string _messageText;
-        public int Id { get; set; }
-        public string MessageText
-        {
-            get => _messageText;
-            set
-            {
-                if (_messageText != value)
-                {
-                    _messageText = value;
-                    OnPropertyChanged(nameof(MessageText));
-                }
-            }
-        }
-        public string AttachmentUrl { get; set; }
-        public DateTime Timestamp { get; set; }
-        public bool IsSentByMe { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class TextMessageToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is string text && !string.IsNullOrEmpty(text))
-            {
-                bool isImageUrl = (text.StartsWith("http://") || text.StartsWith("https://")) &&
-                                  (text.EndsWith(".png") || text.EndsWith(".jpg") || text.EndsWith(".jpeg"));
-                return isImageUrl ? Visibility.Collapsed : Visibility.Visible;
-            }
-            return Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
     public partial class ChatsPage : Page
     {
         private readonly DatabaseHelper dbHelper;

@@ -177,69 +177,48 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 
         public bool RegisterUser(string login, string password)
         {
-            try
+            using (var connection = new SQLiteConnection(connectionString))
             {
-                using (var connection = new SQLiteConnection(connectionString))
+                connection.Open();
+                string query = "INSERT INTO Users (Login, Password) VALUES (@Login, @Password)";
+                using (var command = new SQLiteCommand(query, connection))
                 {
-                    connection.Open();
-                    string query = "INSERT INTO Users (Login, Password) VALUES (@Login, @Password)";
-                    using (var command = new SQLiteCommand(query, connection))
+                    command.Parameters.AddWithValue("@Login", login);
+                    command.Parameters.AddWithValue("@Password", password);
+                    try
                     {
-                        command.Parameters.AddWithValue("@Login", login);
-                        command.Parameters.AddWithValue("@Password", password);
-                        try
-                        {
-                            command.ExecuteNonQuery();
-                            Logger.LogInfo($"User registered successfully: {login}");
-                            return true;
-                        }
-                        catch (SQLiteException ex)
-                        {
-                            // Скорее всего, ошибка из-за уникальности логина
-                            Logger.LogWarning($"Registration failed for user {login}: {ex.Message}");
-                            return false;
-                        }
+                        command.ExecuteNonQuery();
+                        return true;
+                    }
+                    // 6. MySqlException заменен на SQLiteException
+                    catch (SQLiteException)
+                    {
+                        // Скорее всего, ошибка из-за уникальности логина
+                        return false;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Database error during registration: {login}", ex);
-                return false;
             }
         }
 
         public (int? UserId, string Login, string AvatarUrl) LoginUser(string login, string password)
         {
-            try
+            using (var connection = new SQLiteConnection(connectionString))
             {
-                using (var connection = new SQLiteConnection(connectionString))
+                connection.Open();
+                string query = "SELECT Id, Login, AvatarUrl FROM Users WHERE Login = @Login AND Password = @Password";
+                using (var command = new SQLiteCommand(query, connection))
                 {
-                    connection.Open();
-                    string query = "SELECT Id, Login, AvatarUrl FROM Users WHERE Login = @Login AND Password = @Password";
-                    using (var command = new SQLiteCommand(query, connection))
+                    command.Parameters.AddWithValue("@Login", login);
+                    command.Parameters.AddWithValue("@Password", password);
+                    using (var reader = command.ExecuteReader())
                     {
-                        command.Parameters.AddWithValue("@Login", login);
-                        command.Parameters.AddWithValue("@Password", password);
-                        using (var reader = command.ExecuteReader())
+                        if (reader.Read())
                         {
-                            if (reader.Read())
-                            {
-                                string avatarUrl = reader.IsDBNull(2) ? null : reader.GetString(2);
-                                Logger.LogInfo($"User logged in successfully: {login}");
-                                return (reader.GetInt32(0), reader.GetString(1), avatarUrl);
-                            }
-                            else
-                            {
-                                Logger.LogWarning($"Login failed: invalid credentials for {login}");
-                            }
+                            string avatarUrl = reader.IsDBNull(2) ? null : reader.GetString(2);
+                            return (reader.GetInt32(0), reader.GetString(1), avatarUrl);
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Database error during login for {login}", ex);
             }
             return (null, null, null);
         }
@@ -247,33 +226,25 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         public List<(int Id, string Login, string AvatarUrl, bool IsOnline, DateTime? LastSeen, bool IsTyping)> GetUsers(int excludeUserId)
         {
             var users = new List<(int Id, string Login, string AvatarUrl, bool IsOnline, DateTime? LastSeen, bool IsTyping)>();
-            try
+            using (var connection = new SQLiteConnection(connectionString))
             {
-                using (var connection = new SQLiteConnection(connectionString))
+                connection.Open();
+                string query = "SELECT Id, Login, AvatarUrl, IsOnline, LastSeen, IsTyping FROM Users WHERE Id != @UserId ORDER BY Login ASC";
+                using (var command = new SQLiteCommand(query, connection))
                 {
-                    connection.Open();
-                    string query = "SELECT Id, Login, AvatarUrl, IsOnline, LastSeen, IsTyping FROM Users WHERE Id != @UserId ORDER BY Login ASC";
-                    using (var command = new SQLiteCommand(query, connection))
+                    command.Parameters.AddWithValue("@UserId", excludeUserId);
+                    using (var reader = command.ExecuteReader())
                     {
-                        command.Parameters.AddWithValue("@UserId", excludeUserId);
-                        using (var reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                string avatarUrl = reader.IsDBNull(2) ? null : reader.GetString(2);
-                                bool isOnline = reader.GetInt32(3) == 1;
-                                DateTime? lastSeen = reader.IsDBNull(4) ? (DateTime?)null : DateTime.Parse(reader.GetString(4));
-                                bool isTyping = reader.GetInt32(5) == 1;
-                                users.Add((reader.GetInt32(0), reader.GetString(1), avatarUrl, isOnline, lastSeen, isTyping));
-                            }
+                            string avatarUrl = reader.IsDBNull(2) ? null : reader.GetString(2);
+                            bool isOnline = reader.GetInt32(3) == 1;
+                            DateTime? lastSeen = reader.IsDBNull(4) ? (DateTime?)null : DateTime.Parse(reader.GetString(4));
+                            bool isTyping = reader.GetInt32(5) == 1;
+                            users.Add((reader.GetInt32(0), reader.GetString(1), avatarUrl, isOnline, lastSeen, isTyping));
                         }
                     }
-                    Logger.LogInfo($"GetUsers: loaded {users.Count} users for userId {excludeUserId}");
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Error loading users for {excludeUserId}", ex);
             }
             return users;
         }
