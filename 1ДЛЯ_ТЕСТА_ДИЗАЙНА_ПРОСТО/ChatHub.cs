@@ -1,21 +1,60 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Threading.Tasks;
 
 namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 {
-    public class ChatHub : Hub
+    /// <summary>
+    /// Client-side SignalR chat connection handler
+    /// </summary>
+    public class ChatHub
     {
-        public async Task SendMessage(int chatId, int senderId, string message, DateTime timestamp)
+        private HubConnection _connection;
+
+        public ChatHub(string url)
         {
-            // Рассылаем сообщение всем в группе chatId
-            await Clients.Group(chatId.ToString()).ReceiveMessage(chatId, senderId, message, timestamp);
+            _connection = new HubConnectionBuilder()
+                .WithUrl(url)
+                .WithAutomaticReconnect()
+                .Build();
         }
 
-        public async Task JoinChat(int chatId)
+        public async Task ConnectAsync()
         {
-            // Добавляем клиента в группу
-            await Groups.Add(Context.ConnectionId, chatId.ToString());
+            if (_connection?.State != HubConnectionState.Connected)
+            {
+                await _connection.StartAsync();
+            }
+        }
+
+        public async Task DisconnectAsync()
+        {
+            if (_connection?.State == HubConnectionState.Connected)
+            {
+                await _connection.StopAsync();
+            }
+        }
+
+        public async Task SendMessageAsync(int chatId, int senderId, string message, DateTime timestamp)
+        {
+            // Send message to the server
+            await _connection.InvokeAsync("SendMessage", chatId, senderId, message, timestamp);
+        }
+
+        public async Task JoinChatAsync(int chatId)
+        {
+            // Join a chat group
+            await _connection.InvokeAsync("JoinChat", chatId);
+        }
+
+        public void OnReceiveMessage(Action<int, int, string, DateTime> callback)
+        {
+            _connection.On<int, int, string, DateTime>("ReceiveMessage", callback);
+        }
+
+        public HubConnectionState GetConnectionState()
+        {
+            return _connection?.State ?? HubConnectionState.Disconnected;
         }
     }
 }

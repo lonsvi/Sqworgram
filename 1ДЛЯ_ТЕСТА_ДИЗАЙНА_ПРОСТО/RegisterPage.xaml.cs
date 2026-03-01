@@ -51,11 +51,5 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         {
             this.NavigationService?.Navigate(new LoginPage());
         }
-
-        // Обработка нажатия на «Уже есть аккаунт? Войти»
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService?.Navigate(new LoginPage());
-        }
     }
 }

@@ -56,7 +56,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
             MainWindow.AppWindow?.ShowNotification("Аватар успешно обновлен!");
         }
 
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        private void Logout_Click(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.Reset();
             Properties.Settings.Default.Save();
@@ -81,7 +81,7 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
             }
         }
 
-        private void ThemeSettingsButton_Click(object sender, RoutedEventArgs e)
+        private void ThemeSettings_Click(object sender, RoutedEventArgs e)
         {
             NavigationService?.Navigate(new ThemeSettingsPage());
         }

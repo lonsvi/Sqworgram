@@ -11,8 +11,16 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         /// </summary>
         public static void ApplyThemeFromSettings()
         {
-            var settings = Properties.Settings.Default;
-            ApplyTheme(settings.AccentColor, settings.BlobColor1, settings.BlobColor2);
+            try
+            {
+                var settings = Properties.Settings.Default;
+                ApplyTheme(settings.AccentColor, settings.BlobColor1, settings.BlobColor2);
+            }
+            catch
+            {
+                // Use default theme if settings cannot be loaded
+                ApplyTheme("#FF6A359C", "#FF4A00E0", "#FF8E2DE2");
+            }
         }
 
         /// <summary>

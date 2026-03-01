@@ -16,6 +16,53 @@ using System.Windows.Threading;
 
 namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
 {
+    public class MessageViewModel : INotifyPropertyChanged
+    {
+        private string _messageText;
+        public int Id { get; set; }
+        public string MessageText
+        {
+            get => _messageText;
+            set
+            {
+                if (_messageText != value)
+                {
+                    _messageText = value;
+                    OnPropertyChanged(nameof(MessageText));
+                }
+            }
+        }
+        public string AttachmentUrl { get; set; }
+        public DateTime Timestamp { get; set; }
+        public bool IsSentByMe { get; set; }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class TextMessageToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string text && !string.IsNullOrEmpty(text))
+            {
+                bool isImageUrl = (text.StartsWith("http://") || text.StartsWith("https://")) &&
+                                  (text.EndsWith(".png") || text.EndsWith(".jpg") || text.EndsWith(".jpeg"));
+                return isImageUrl ? Visibility.Collapsed : Visibility.Visible;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
     public partial class ChatsPage : Page
     {
         private readonly DatabaseHelper dbHelper;
@@ -146,12 +193,12 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { if (sender is Image image && image.DataContext is MessageViewModel vm && !string.IsNullOrEmpty(vm.AttachmentUrl)) { OpenImage(vm.AttachmentUrl); } }
         private async void SendMessage_Click(object sender, RoutedEventArgs e) { if (currentChatId == -1) return; string newMessage = MessageTextBox.Text; string attachmentUrl = null; if (!string.IsNullOrEmpty(selectedAttachmentPath)) { try { attachmentUrl = await imageUploader.UploadImageAsync(selectedAttachmentPath); } catch (Exception ex) { MessageBox.Show($"Не удалось загрузить изображение: {ex.Message}"); return; } } if (string.IsNullOrWhiteSpace(newMessage) && string.IsNullOrEmpty(attachmentUrl)) return; DateTime timestamp = DateTime.Now; int messageId = await Task.Run(() => dbHelper.SaveMessageAndGetId(currentChatId, currentUserId, newMessage, attachmentUrl, timestamp)); AddMessageToUI(messageId, newMessage, attachmentUrl, true, timestamp); Dispatcher.Invoke(() => { MessageTextBox.Clear(); selectedAttachmentPath = null; ChatScrollViewer.ScrollToEnd(); }); lastMessageCheck = timestamp; }
         private void MessageTextBox_KeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Enter && Keyboard.Modifiers != ModifierKeys.Shift) { SendMessage_Click(sender, e); e.Handled = true; } }
-        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) { if (!isPageLoaded) return; Task.Run(() => LoadChatsAsync(true)); }
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) { if (!isPageLoaded) return; _ = LoadChatsAsync(true); }
         private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e) { var textBox = sender as TextBox; if (textBox.Text == "Поиск") { textBox.Text = ""; textBox.Foreground = (Brush)FindResource("PrimaryTextColor"); } }
         private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e) { var textBox = sender as TextBox; if (string.IsNullOrWhiteSpace(textBox.Text)) { textBox.Text = "Поиск"; textBox.Foreground = (Brush)FindResource("SecondaryTextColor"); } }
-        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e) { string text = MessageTextBox.Text; Task.Run(() => dbHelper.SetUserTyping(currentUserId, !string.IsNullOrEmpty(text))); }
+        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e) { string text = MessageTextBox.Text; _ = Task.Run(() => dbHelper.SetUserTyping(currentUserId, !string.IsNullOrEmpty(text))); }
         private void AttachFileButton_Click(object sender, RoutedEventArgs e) { var openFileDialog = new Microsoft.Win32.OpenFileDialog { Filter = "Images (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg|All files (*.*)|*.*", Multiselect = false }; if (openFileDialog.ShowDialog() == true) { selectedAttachmentPath = openFileDialog.FileName; } }
-        private void DownloadFile(string fileUrl) { var saveFileDialog = new Microsoft.Win32.SaveFileDialog { FileName = System.IO.Path.GetFileName(fileUrl), Filter = "All files (*.*)|*.*" }; if (saveFileDialog.ShowDialog() == true) { using (var client = new System.Net.WebClient()) { try { client.DownloadFile(fileUrl, saveFileDialog.FileName); MessageBox.Show("Файл успешно сохранён!"); } catch (Exception ex) { MessageBox.Show($"Ошибка при скачивании файла: {ex.Message}"); } } } }
+        private async void DownloadFile(string fileUrl) { var saveFileDialog = new Microsoft.Win32.SaveFileDialog { FileName = System.IO.Path.GetFileName(fileUrl), Filter = "All files (*.*)|*.*" }; if (saveFileDialog.ShowDialog() == true) { try { using (var client = new System.Net.Http.HttpClient()) { var response = await client.GetAsync(fileUrl); response.EnsureSuccessStatusCode(); using (var contentStream = await response.Content.ReadAsStreamAsync()) { using (var fileStream = System.IO.File.Create(saveFileDialog.FileName)) { await contentStream.CopyToAsync(fileStream); } } } MessageBox.Show("Файл успешно сохранён!"); } catch (Exception ex) { MessageBox.Show($"Ошибка при скачивании файла: {ex.Message}"); } } }
         private void OpenImage(string imageUrl) { try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = imageUrl, UseShellExecute = true }); } catch (Exception ex) { MessageBox.Show($"Не удалось открыть изображение: {ex.Message}"); } }
         private void SettingsButton_Click(object sender, RoutedEventArgs e) { NavigationService?.Navigate(new SettingsPage(currentUserId, currentUserLogin, currentAvatarUrl)); }
         private async void ChatListBox_MouseRightButtonUp(object sender, MouseButtonEventArgs e) { if (ChatListBox.SelectedItem != null) { string selectedChat = ((dynamic)ChatListBox.SelectedItem).Login; int chatId = chatMapping[selectedChat]; var favoriteChats = await Task.Run(() => dbHelper.GetFavoriteChats(currentUserId).ToHashSet()); var contextMenu = new ContextMenu(); var favoriteItem = new MenuItem { Header = favoriteChats.Contains(chatId) ? "Убрать из избранного" : "Добавить в избранное" }; favoriteItem.Click += async (s, args) => { if (favoriteChats.Contains(chatId)) { await Task.Run(() => dbHelper.RemoveFavoriteChat(currentUserId, chatId)); } else { await Task.Run(() => dbHelper.AddFavoriteChat(currentUserId, chatId)); } await LoadChatsAsync(true); }; contextMenu.Items.Add(favoriteItem); contextMenu.IsOpen = true; } }
