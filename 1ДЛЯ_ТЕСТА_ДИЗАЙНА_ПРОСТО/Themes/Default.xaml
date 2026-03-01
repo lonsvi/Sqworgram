@@ -12,6 +12,7 @@
 
     <!-- Brushes that use the dynamic colors -->
     <SolidColorBrush x:Key="AccentColorBrush" Color="{DynamicResource AccentColorValue}"/>
+    <SolidColorBrush x:Key="SecondaryAccentColorBrush" Color="#FF6A359C"/>
 
     <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0.5" EndPoint="1,0.5">
         <GradientStop Color="{DynamicResource AccentColorValue}" Offset="0.0" />
@@ -34,8 +35,10 @@
     <!-- STATIC COLORS & BRUSHES (These are constant across all themes)                      -->
     <!-- =================================================================================== -->
     <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF1E1E1E"/>
+    <SolidColorBrush x:Key="MainBackgroundColor" Color="#FF0D0D0D"/>
     <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF2B2B2B"/>
     <SolidColorBrush x:Key="ControlBackgroundColor" Color="#FF333333"/>
+    <SolidColorBrush x:Key="PanelBackgroundColor" Color="#FF1F1F1F"/>
     <SolidColorBrush x:Key="HoverBackgroundColor" Color="#FF4A4A4A"/>
     <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="SecondaryTextColor" Color="#FF8A9BAB"/>

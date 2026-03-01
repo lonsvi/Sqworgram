@@ -6,105 +6,107 @@
       mc:Ignorable="d" 
       Title="LoginPage" d:DesignHeight="600" d:DesignWidth="1000">
 
-    <!-- ИЗМЕНЕНИЕ: Все ресурсы стилей удалены и теперь будут браться из центрального файла Themes/Default.xaml -->
     <Page.Resources>
-        <!-- Анимации остаются локальными, так как они специфичны для этой страницы -->
-        <Storyboard x:Key="ButtonHoverOn">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.03" Duration="0:0:0.1"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.03" Duration="0:0:0.1"/>
-        </Storyboard>
-        <Storyboard x:Key="ButtonHoverOff">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.1"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.1"/>
-        </Storyboard>
-        <Storyboard x:Key="ControlFocusOn">
-            <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.4" Duration="0:0:0.2"/>
-        </Storyboard>
-        <Storyboard x:Key="ControlFocusOff">
-            <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0" Duration="0:0:0.2"/>
-        </Storyboard>
-        <Storyboard x:Key="BlobAnimation1" RepeatBehavior="Forever" AutoReverse="True">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.2" Duration="0:0:25"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.2" Duration="0:0:25"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="90" Duration="0:0:30"/>
-        </Storyboard>
-        <Storyboard x:Key="BlobAnimation2" RepeatBehavior="Forever" AutoReverse="True">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1.2" To="1" Duration="0:0:35"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1.2" To="1" Duration="0:0:35"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="0" To="-70" Duration="0:0:40"/>
+        <Storyboard x:Key="PageLoadAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="00:00:00.6"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="20" To="0" Duration="00:00:00.5">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
 
-        <!-- Стили для полей ввода (теперь используют динамические ресурсы) -->
-        <Style x:Key="ModernTextBoxBase" TargetType="Control">
-            <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="12,8"/>
+        <Storyboard x:Key="StaticBlobAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" 
+                             From="1" To="1.1" Duration="00:00:10" AutoReverse="True" RepeatBehavior="Forever"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" 
+                             From="1" To="1.1" Duration="00:00:10" AutoReverse="True" RepeatBehavior="Forever"/>
+        </Storyboard>
+
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}"/>
+            <Setter Property="BorderBrush" Value="#33FFFFFF"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Height" Value="45"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="15,0"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Control">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
-                            <Border.Effect>
-                                <DropShadowEffect x:Name="shadow" ShadowDepth="0" Color="{DynamicResource AccentColorValue}" BlurRadius="10" Opacity="0"/>
-                            </Border.Effect>
-                            <ScrollViewer x:Name="PART_ContentHost"/>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="12" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentGradientBrush}"/>
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource ControlFocusOn}"/>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource ControlFocusOff}"/>
-                                </Trigger.ExitActions>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
+                                <Setter TargetName="border" Property="Background" Value="#222222"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="ModernTextBox" TargetType="TextBox" BasedOn="{StaticResource ModernTextBoxBase}">
+
+        <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}"/>
-        </Style>
-        <Style x:Key="ModernPasswordBox" TargetType="PasswordBox" BasedOn="{StaticResource ModernTextBoxBase}">
-            <Setter Property="CaretBrush" Value="{DynamicResource AccentColorBrush}"/>
+            <Setter Property="BorderBrush" Value="#33FFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="12" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
+                                <Setter TargetName="border" Property="Background" Value="#222222"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
-        <!-- Стили для кнопок (теперь используют динамические ресурсы) -->
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Background" Value="{DynamicResource AccentGradientBrush}"/>
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="12" RenderTransformOrigin="0.5,0.5">
                             <Border.RenderTransform>
-                                <ScaleTransform ScaleX="1" ScaleY="1" CenterX="125" CenterY="22.5"/>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
                             </Border.RenderTransform>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.9"/>
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOn}"/>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource ButtonHoverOff}"/>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Opacity" Value="0.7"/>
-                            </Trigger>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.04" Duration="00:00:00.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.04" Duration="00:00:00.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="00:00:00.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="00:00:00.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -113,102 +115,87 @@
 
         <Style x:Key="TextButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
-            <Setter Property="FontWeight" Value="Normal"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#88FFFFFF"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <TextBlock x:Name="textBlock" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="TextDecorations" Value="Underline"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                        <TextBlock x:Name="txt" Text="{TemplateBinding Content}" Cursor="Hand" HorizontalAlignment="Center" Background="Transparent"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="txt" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
     </Page.Resources>
 
-    <Grid Background="{DynamicResource PrimaryBackgroundColor}" ClipToBounds="True">
-        <Grid>
-            <Border x:Name="Blob1" Width="400" Height="400" CornerRadius="200" Opacity="0.8" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-150,-100,0,0"
-                    Background="{DynamicResource Blob1Brush}">
+    <Page.RenderTransform>
+        <TranslateTransform Y="0"/>
+    </Page.RenderTransform>
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard Storyboard="{StaticResource PageLoadAnimation}"/>
+        </EventTrigger>
+    </Page.Triggers>
+
+    <Grid Background="#0A0A0A">
+        <Grid IsHitTestVisible="False">
+            <Border Width="600" Height="600" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-200,-200,0,0"
+                    Background="{DynamicResource Blob1Brush}" Opacity="0.3" CornerRadius="300" RenderTransformOrigin="0.5,0.5">
                 <Border.Effect>
                     <BlurEffect Radius="150"/>
                 </Border.Effect>
                 <Border.RenderTransform>
                     <TransformGroup>
-                        <ScaleTransform CenterX="200" CenterY="200"/>
-                        <RotateTransform CenterX="200" CenterY="200"/>
+                        <ScaleTransform/>
+                        <RotateTransform/>
                     </TransformGroup>
                 </Border.RenderTransform>
                 <Border.Triggers>
                     <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation1}"/>
+                        <BeginStoryboard Storyboard="{StaticResource StaticBlobAnimation}"/>
                     </EventTrigger>
                 </Border.Triggers>
             </Border>
 
-            <Border x:Name="Blob2" Width="500" Height="500" CornerRadius="250" Opacity="0.7" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-200,-150"
-                    Background="{DynamicResource Blob2Brush}">
+            <Border Width="500" Height="500" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-150,-150"
+                    Background="{DynamicResource Blob2Brush}" Opacity="0.2" CornerRadius="250" RenderTransformOrigin="0.5,0.5">
                 <Border.Effect>
-                    <BlurEffect Radius="200"/>
+                    <BlurEffect Radius="150"/>
                 </Border.Effect>
                 <Border.RenderTransform>
                     <TransformGroup>
-                        <ScaleTransform CenterX="250" CenterY="250"/>
-                        <RotateTransform CenterX="250" CenterY="250"/>
+                        <ScaleTransform/>
+                        <RotateTransform/>
                     </TransformGroup>
                 </Border.RenderTransform>
                 <Border.Triggers>
                     <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard Storyboard="{StaticResource BlobAnimation2}"/>
+                        <BeginStoryboard Storyboard="{StaticResource StaticBlobAnimation}"/>
                     </EventTrigger>
                 </Border.Triggers>
             </Border>
         </Grid>
 
-        <Border x:Name="LoginPanel" Background="#992B2B2B" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" d:Opacity="1">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Opacity" Value="0"/>
-                    <Style.Triggers>
-                        <EventTrigger RoutedEvent="Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4"/>
-                                    <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,-30,0,30" To="0" Duration="0:0:0.4">
-                                        <ThicknessAnimation.EasingFunction>
-                                            <CubicEase EasingMode="EaseOut"/>
-                                        </ThicknessAnimation.EasingFunction>
-                                    </ThicknessAnimation>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
+        <Border Width="380" VerticalAlignment="Center" Background="#F2141414" CornerRadius="28" BorderBrush="#1AFFFFFF" BorderThickness="1">
             <Border.Effect>
-                <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.4" BlurRadius="30"/>
+                <DropShadowEffect BlurRadius="50" Color="Black" Opacity="0.7" ShadowDepth="0"/>
             </Border.Effect>
 
-            <StackPanel Margin="30">
-                <TextBlock Text="Вход в мессенджер" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextColor}" HorizontalAlignment="Center" Margin="0,0,0,25"/>
-                <TextBlock Text="Логин" Foreground="{DynamicResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
-                <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
-                <TextBlock Text="Пароль" Foreground="{DynamicResource PrimaryTextColor}" FontSize="12" Margin="10,0,0,5"/>
-                <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,25"/>
-                <Button Content="Войти" Style="{StaticResource PrimaryButton}" Margin="0,10,0,15" Click="LoginButton_Click"/>
-                <Button Content="Нет аккаунта? Зарегистрироваться" Style="{StaticResource TextButton}" HorizontalAlignment="Center" Click="RegisterButton_Click"/>
+            <StackPanel Margin="35">
+                <TextBlock Text="Sqworogram" Foreground="White" FontSize="32" FontWeight="ExtraBold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Text="Войдите в свой аккаунт" Foreground="#44FFFFFF" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,35"/>
+
+                <TextBlock Text="ЛОГИН" Foreground="#66FFFFFF" FontSize="10" FontWeight="Bold" Margin="5,0,0,8"/>
+                <TextBox x:Name="LoginTextBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,20"/>
+
+                <TextBlock Text="ПАРОЛЬ" Foreground="#66FFFFFF" FontSize="10" FontWeight="Bold" Margin="5,0,0,8"/>
+                <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,30"/>
+
+                <Button Content="ВОЙТИ" Style="{StaticResource PrimaryButton}" Height="50" Margin="0,0,0,20" Click="LoginButton_Click"/>
+                <Button Content="Создать новый аккаунт" Style="{StaticResource TextButton}" Click="RegisterButton_Click"/>
             </StackPanel>
         </Border>
     </Grid>

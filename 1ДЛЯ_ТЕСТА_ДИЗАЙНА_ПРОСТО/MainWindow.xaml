@@ -15,47 +15,37 @@
     <Window.Resources>
         <Style x:Key="WindowControlButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#FF9E9E9E"/>
+            <Setter Property="Foreground" Value="#FFAAAAAA"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Width" Value="46"/>
+            <Setter Property="Width" Value="40"/>
             <Setter Property="Height" Value="32"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#FF505050"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="4" Margin="2,4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FF6A6A6A"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#15FFFFFF"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#25FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource WindowControlButton}">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#E81123"/>
+                    <Setter Property="Background" Value="#C42B1C"/>
                     <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#F1707A"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -63,54 +53,50 @@
 
     <WindowChrome.WindowChrome>
         <WindowChrome 
-            ResizeBorderThickness="8"
-            CaptionHeight="32"
-            CornerRadius="0"
-            GlassFrameThickness="0"
-            UseAeroCaptionButtons="False" />
+        ResizeBorderThickness="6" 
+        CaptionHeight="38" 
+        CornerRadius="0" 
+        GlassFrameThickness="0" 
+        UseAeroCaptionButtons="False" 
+        NonClientFrameEdges="None" />
     </WindowChrome.WindowChrome>
 
-    <Border x:Name="MainWindowBorder" CornerRadius="10" ClipToBounds="True">
-        <Border.Background>
-            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                <GradientStop Color="#FF3C3C3C" Offset="0"/>
-                <GradientStop Color="#FF1E1E1E" Offset="1"/>
-            </LinearGradientBrush>
-        </Border.Background>
-
+    <Border x:Name="MainWindowBorder" CornerRadius="12" BorderThickness="1" BorderBrush="#33FFFFFF" Background="#1A1A1A" ClipToBounds="True">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="38"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Background="Transparent" Height="32" MouseDown="Border_MouseDown">
+            <Border Grid.Row="0" Background="#05FFFFFF" BorderBrush="#11FFFFFF" BorderThickness="0,0,0,1" MouseDown="Border_MouseDown">
                 <Grid>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Image Source="/image (2).jpg" Width="16" Height="16" Margin="10,0,5,0"/>
-                        <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" Foreground="#FFCCCCCC" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0">
+                        <Border CornerRadius="4" ClipToBounds="True" Width="20" Height="20" Margin="0,0,10,0">
+                            <Image Source="/image (2).jpg"/>
+                        </Border>
+                        <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                   FontSize="12" FontWeight="SemiBold" Foreground="#FFDDDDDD" VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
                         <Button Style="{StaticResource WindowControlButton}" Click="MinimizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
-                            <Path Data="M0,6 H12" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" />
+                            <Path Data="M0,8 H10" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.2" Stretch="Uniform" Width="10"/>
                         </Button>
                         <Button Style="{StaticResource WindowControlButton}" Click="MaximizeRestoreButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
-                            <Path Data="M0,2 H8 V10 H0 Z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" />
+                            <Path Data="M1,1 H9 V9 H1 Z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.2" Stretch="Uniform" Width="10"/>
                         </Button>
                         <Button Style="{StaticResource CloseButton}" Click="CloseButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
-                            <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" />
+                            <Path Data="M1,1 L9,9 M9,1 L1,9" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.2" Stretch="Uniform" Width="10"/>
                         </Button>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <Frame Grid.Row="1" x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+            <Grid Grid.Row="1">
+                <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
 
-            <!-- НОВЫЙ ЭЛЕМЕНТ: Контейнер для уведомлений -->
-            <StackPanel x:Name="NotificationArea" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" Panel.ZIndex="99"/>
-
+                <StackPanel x:Name="NotificationArea" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,15,15,0" Panel.ZIndex="100"/>
+            </Grid>
         </Grid>
     </Border>
 </Window>
-

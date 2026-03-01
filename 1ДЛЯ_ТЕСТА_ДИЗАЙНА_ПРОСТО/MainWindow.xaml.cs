@@ -12,6 +12,11 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         public MainWindow()
         {
             InitializeComponent();
+
+            // ФИКС: Ограничиваем максимальный размер окна размером рабочей области (без панели задач)
+            this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+
             ThemeManager.ApplyThemeFromSettings();
             AppWindow = this;
             MainFrame.Navigate(new LoginPage());
@@ -69,13 +74,21 @@ namespace _1ДЛЯ_ТЕСТА_ДИЗАЙНА_ПРОСТО
         {
             if (this.WindowState == WindowState.Maximized)
             {
+                // 1. Убираем скругления, чтобы углы были четкими
                 MainWindowBorder.CornerRadius = new CornerRadius(0);
-                MainWindowBorder.Margin = new Thickness(8);
+
+                // 2. ФИКС "ЗАЕЗДА" ЗА ЭКРАН: 
+                // Когда окно развернуто, Windows добавляет невидимую рамку (обычно 7-8 пикселей).
+                // Мы компенсируем её внутренним отступом самого Border.
+                MainWindowBorder.Padding = new Thickness(7);
+                MainWindowBorder.BorderThickness = new Thickness(0);
             }
             else
             {
-                MainWindowBorder.CornerRadius = new CornerRadius(10);
-                MainWindowBorder.Margin = new Thickness(0);
+                // Возвращаем как было
+                MainWindowBorder.CornerRadius = new CornerRadius(12);
+                MainWindowBorder.Padding = new Thickness(0);
+                MainWindowBorder.BorderThickness = new Thickness(1);
             }
         }
     }
